@@ -14,3 +14,12 @@ class TextDisplay(object):
         value_map = {0: '  ', 1: '**'}
         for row in self.ca_rep.array:
             print ''.join(value_map[c] for c in row)
+
+class CursesDisplay(object):
+
+    def __init__(self, ca):
+        self.ca = ca
+
+    def display_run(self, n_frames):
+        pass
+        
