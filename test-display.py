@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import numpy as np
-from ca_display import CARep, TextDisplay
+from ca_display import CARep, TextDisplay, CursesDisplay
 from ca_engine import CA
 
 def circle():
@@ -19,11 +19,14 @@ def main():
     life_ca[11, 10] = 1
     # Initialise a few cells
     ca_rep = CARep(life_ca.array)
-    test_display = TextDisplay(ca_rep)
-    test_display.display()
-    life_ca.update()
-    test_display.array = life_ca.array
-    test_display.display()
+
+    curse_display = CursesDisplay(life_ca)
+    curse_display.display_run(10)
+    # test_display = TextDisplay(ca_rep)
+    # test_display.display()
+    # life_ca.update()
+
+    # test_display.display()
     
 if __name__ == '__main__':
     main()

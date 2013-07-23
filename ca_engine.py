@@ -18,9 +18,9 @@ class CA(object):
         return nn
 
     def update(self):
-        print 'up'
+#        print 'up'
 #        print self.array
-        print self.nn(9, 11)
+ #       print self.nn(9, 11)
         
         ln = [-1, 0, 1]
         h8 = [(r, c) for r in ln for c in ln]

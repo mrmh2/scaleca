@@ -1,5 +1,8 @@
 """CA display"""
 
+import curses
+import time
+
 class CARep(object):
 
     def __init__(self, array):
@@ -21,5 +24,23 @@ class CursesDisplay(object):
         self.ca = ca
 
     def display_run(self, n_frames):
-        pass
+        stdscr = curses.initscr()
+        curses.cbreak()
+        curses.noecho()
+        value_map = {0: '  ', 1: '**'}
+        for n in range(0, n_frames):
+            #print self.ca.array
+            for (r, row) in enumerate(self.ca.array):
+                str_rep = ''.join(value_map[c] for c in row)
+                stdscr.addstr(r, 0, str_rep)
+                
+            stdscr.refresh()
+            self.ca.update()
+            time.sleep(0.5)
+
+        curses.nocbreak()
+        curses.echo()
+        curses.endwin()
+
+        
         
