@@ -23,11 +23,11 @@ class CursesDisplay(object):
     def __init__(self, ca):
         self.ca = ca
 
-    def display_run(self, n_frames):
+    def display_run(self, n_frames, interval=0.5):
         stdscr = curses.initscr()
         curses.cbreak()
         curses.noecho()
-        value_map = {0: '  ', 1: '**'}
+        value_map = {0: '  ', 1: '*'}
         for n in range(0, n_frames):
             #print self.ca.array
             for (r, row) in enumerate(self.ca.array):
@@ -36,7 +36,7 @@ class CursesDisplay(object):
                 
             stdscr.refresh()
             self.ca.update()
-            time.sleep(0.5)
+            time.sleep(interval)
 
         curses.nocbreak()
         curses.echo()

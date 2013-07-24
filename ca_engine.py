@@ -1,6 +1,7 @@
 """CA engine"""
 
 import numpy as np
+import pickle
 
 class CA(object):
 
@@ -16,6 +17,28 @@ class CA(object):
         h8.remove((0, 0))
         nn = sum([self.array[ri+r, ci+c] for r, c in h8])
         return nn
+
+    def sparse_rep(self):
+        """Sparse representation of internal array"""
+        return zip(*np.where(self.array==1))
+
+    def inflate_rep(sparse_rep):
+        print sparse_rep
+
+    def save_state(self, filename):
+        
+        with open(filename, 'wb') as f:
+            pickle.dump(self.array.shape, f)
+            pickle.dump(self.sparse_rep(), f)
+
+    def load_state(self, filename):
+
+        with open(filename, 'rb') as f:
+            shape = pickle.load(f)
+            new_array = np.zeros(shape, dtype=np.uint8)
+            sparse_rep = pickle.load(f)
+            new_array[zip(*sparse_rep)] = 1
+            self.array = new_array
 
     def update(self):
 #        print 'up'
