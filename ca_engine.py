@@ -1,7 +1,10 @@
 """CA engine"""
 
+import random
 import numpy as np
 import pickle
+
+import scipy.misc
 
 class CA(object):
 
@@ -18,6 +21,13 @@ class CA(object):
         nn = sum([self.array[ri+r, ci+c] for r, c in h8])
         return nn
 
+    def fill_random(self):
+        xdim, ydim = self.array.shape
+
+        for x in range(0, xdim):
+            for y in range(0, ydim):
+                self.array[x, y] = random.randint(0, 1)
+
     def sparse_rep(self):
         """Sparse representation of internal array"""
         return zip(*np.where(self.array==1))
@@ -31,6 +41,14 @@ class CA(object):
             pickle.dump(self.array.shape, f)
             pickle.dump(self.sparse_rep(), f)
 
+    def save_as_png(self, filename):
+        xdim, ydim = self.array.shape
+        outarray = np.zeros((xdim, ydim, 3), dtype=np.uint8)
+        on = np.where(self.array == 1)
+        #outarray[zip(*on)] = (255, 255, 255)
+        scipy.misc.imsave(filename, outarray)
+
+
     def load_state(self, filename):
 
         with open(filename, 'rb') as f:
@@ -40,15 +58,32 @@ class CA(object):
             new_array[zip(*sparse_rep)] = 1
             self.array = new_array
 
+    def update_vote(self):
+        ln = [-1, 0, 1]
+        h8 = [(r, c) for r in ln for c in ln]
+        h8.remove((0, 0))
+        max_x, max_y = self.array.shape
+        next_state = np.zeros((max_x, max_y), np.uint8)
+
+        update_rule_l = {s: 0 for s in range(0, 10)}
+        update_rule_l.update({s: 1 for s in range(5, 10)})
+        #update_rule_l[4] = 0
+        #update_rule_l[5] = 1
+
+        all_cells = [(r, c) for r in range(1, max_y-1)
+               for c in range(1, max_x-1)]
+
+        for ar, ac in all_cells:
+            nn = sum([self.array[ar+r, ac+c] for r, c in h8])
+            next_state[ar, ac] = update_rule_l[self.array[ar, ac] + nn]
+
+        self.array = next_state
+        
     def update(self):
-#        print 'up'
-#        print self.array
- #       print self.nn(9, 11)
         
         ln = [-1, 0, 1]
         h8 = [(r, c) for r in ln for c in ln]
         h8.remove((0, 0))
-        #print h8
         max_x, max_y = self.array.shape
         next_state = np.zeros((max_x, max_y), np.uint8)
 
@@ -68,6 +103,7 @@ class CA(object):
                 next_state[ar, ac] = 1 if nn == 3 else 0
 
         self.array = next_state
+        #print h8
  #       print self.array
 
 

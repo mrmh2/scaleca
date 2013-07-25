@@ -1,2 +1,9 @@
 * ca engine
 ** TODO Proper format for CA states and components
+
+* ca master
+** TODO Plan!
+   
+* ca displays
+** curses display
+*** TODO Check colour rendering.

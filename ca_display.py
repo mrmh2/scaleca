@@ -35,7 +35,7 @@ class CursesDisplay(object):
                 stdscr.addstr(r, 0, str_rep)
                 
             stdscr.refresh()
-            self.ca.update()
+            self.ca.update_vote()
             time.sleep(interval)
 
         curses.nocbreak()
