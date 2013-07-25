@@ -8,8 +8,11 @@ import scipy.misc
 
 class CA(object):
 
-    def __init__(self, array):
-        self.array = array
+    def __init__(self, max_row, max_col):
+        self.max_row = max_row
+        self.max_col = max_col
+        
+        self.array = np.zeros((max_row, max_col), dtype=np.uint8)
 
     def __setitem__(self, key, value):
         self.array[key] = value
@@ -48,7 +51,6 @@ class CA(object):
         #outarray[zip(*on)] = (255, 255, 255)
         scipy.misc.imsave(filename, outarray)
 
-
     def load_state(self, filename):
 
         with open(filename, 'rb') as f:
@@ -62,16 +64,15 @@ class CA(object):
         ln = [-1, 0, 1]
         h8 = [(r, c) for r in ln for c in ln]
         h8.remove((0, 0))
-        max_x, max_y = self.array.shape
-        next_state = np.zeros((max_x, max_y), np.uint8)
+        next_state = np.zeros((self.max_row, self.max_col), np.uint8)
 
         update_rule_l = {s: 0 for s in range(0, 10)}
         update_rule_l.update({s: 1 for s in range(5, 10)})
-        #update_rule_l[4] = 0
-        #update_rule_l[5] = 1
+        update_rule_l[4] = 1
+        update_rule_l[5] = 0
 
-        all_cells = [(r, c) for r in range(1, max_y-1)
-               for c in range(1, max_x-1)]
+        all_cells = [(r, c) for r in range(1, self.max_row-1)
+               for c in range(1, self.max_col-1)]
 
         for ar, ac in all_cells:
             nn = sum([self.array[ar+r, ac+c] for r, c in h8])

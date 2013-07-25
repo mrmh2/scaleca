@@ -11,17 +11,15 @@ def test_curses_display(ca):
 
 def main():
     # Initialise empty np array
-    mock_ca = np.zeros((35, 35), dtype=np.uint32)
     # Turn that into our basic CA
-    life_ca = CA(mock_ca)
-
+    life_ca = CA(35, 50)
     life_ca.fill_random()
 
-    life_ca.save_as_png('start.png')
+#    life_ca.save_as_png('start.png')
 #    life_ca.load_state('pentomino.ca')
 
     #life_ca.update_vote()
-#    test_curses_display(life_ca)
+    test_curses_display(life_ca)
 
     # test_display = TextDisplay(ca_rep)
     # test_display.display()
