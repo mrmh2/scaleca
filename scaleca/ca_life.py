@@ -6,7 +6,9 @@ import pickle
 
 import scipy.misc
 
-class CA(object):
+from ca_base import CABase
+
+class CA(CABase):
 
     def __init__(self, max_row, max_col):
         self.max_row = max_row

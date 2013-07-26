@@ -3,7 +3,8 @@ import sys
 
 import numpy as np
 #sys.path.insert(0, '../')
-from scaleca.ca_static import CA
+#from scaleca.ca_static import CA
+from scaleca.ca_life import CA
 from scaleca.disp_simple import CADisplay
 
 def string_state_to_array(sstate, shape):
@@ -30,6 +31,9 @@ def get_state_maker(ca):
     
 def main():
     test_ca = CA(10, 10)
+    test_ca[5,5] = 1
+    test_ca[5,4] = 1
+    test_ca[5,6] = 1
 
     get_state = get_state_maker(test_ca)
 
