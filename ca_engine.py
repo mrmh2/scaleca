@@ -71,6 +71,12 @@ class CA(object):
         update_rule_l[4] = 1
         update_rule_l[5] = 0
 
+        # Copies for wrap boundary conditions
+        self.array[0,:] = self.array[self.max_row-2, :]
+        self.array[self.max_row-1,:] = self.array[1,:]
+        self.array[:,0] = self.array[:, self.max_col-2]
+        self.array[:, self.max_col-1] = self.array[:, 1]
+
         all_cells = [(r, c) for r in range(1, self.max_row-1)
                for c in range(1, self.max_col-1)]
 
@@ -91,6 +97,8 @@ class CA(object):
         update_rule_l = {s: 0 for s in range(0, 9)}
         update_rule_l[2] = 1
         update_rule_l[3] = 1
+
+        # Copy for wrap boundary conditions
 
         all_cells = [(r, c) for r in range(1, max_y-1)
                for c in range(1, max_x-1)]

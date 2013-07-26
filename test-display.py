@@ -7,12 +7,12 @@ from ca_engine import CA
 
 def test_curses_display(ca):
     curse_display = CursesDisplay(ca)
-    curse_display.display_run(80, 0.1)
+    curse_display.display_run(80, 0.001)
 
 def main():
     # Initialise empty np array
     # Turn that into our basic CA
-    life_ca = CA(35, 80)
+    life_ca = CA(36, 149)
     life_ca.fill_random()
 
 #    life_ca.save_as_png('start.png')

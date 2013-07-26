@@ -39,6 +39,7 @@ class CursesDisplay(object):
 
     def display_run(self, n_frames, interval=0.5):
         with RawCurses() as stdscr:
+            scr_r, scr_c = stdscr.getmaxyx()
             value_map = {0: '  ', 1: '*'}
             for n in range(0, n_frames):
                 #print self.ca.array
@@ -49,6 +50,7 @@ class CursesDisplay(object):
                 stdscr.refresh()
                 self.ca.update_vote()
                 time.sleep(interval)
+        print scr_r, scr_c
 
 
         
