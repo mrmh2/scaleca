@@ -1,0 +1,10 @@
+* coordinates
+
+(row, column)
+
+(0, 0)				(0, max_c)
+
+
+
+
+(max_r, 0)			(max_r, max_c)

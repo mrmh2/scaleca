@@ -1,0 +1,23 @@
+
+
+Simulation engine:
+
+Continuous run
+Told-to-loop version
+
+Display client
+
+
+Simple version
+--------------
+
+Master starts simulation then listens
+Display client connects then issues request for display
+Client then tells simulation to run one step, then receives display
+
+CA class
+--------
+Init method
+Single update method
+Access state method
+?State diff method

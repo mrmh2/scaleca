@@ -7,3 +7,10 @@
 * ca displays
 ** curses display
 *** TODO Check colour rendering.
+** TODO VTK display
+
+* To categorise
+
+** TODO Unit tests
+** TODO Speed tests
+** TODO Simple CA in C
