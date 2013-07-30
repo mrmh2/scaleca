@@ -4,16 +4,15 @@
     <title>Web CA example</title>
     <script src="https://d396qusza40orc.cloudfront.net/startup%2Fcode%2Fjquery.js"></script>
     <script>
-      var display_func = function() {
+      var display_func = function(data) {
         $('.result').html(data);
       }
+
       var grab_and_disp = function() {
-        $.get('http://localhost:5000/cainterface', function(data) {
-          $('.result').html(data);
-        });
+        $.get('http://localhost:5000/cainterface', display_func);
       }
 
-      window.onload = grab_and_disp
+      window.onload = setInterval(grab_and_disp, 200);
     </script>
   </head>
   <body>

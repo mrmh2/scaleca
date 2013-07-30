@@ -41,15 +41,14 @@ def main():
     setup()
     port = "5556"
     socket = init_server(port)
-    test_ca = CA(10, 10)
-    test_ca[5,5] = 1
-    test_ca[5,4] = 1
-    test_ca[5,6] = 1
+    test_ca = CA(40, 100)
+    test_ca.fill_random()
+
 
     listen_loop(socket, test_ca)
 
 def run_sim(ca):
-    ca.update()
+    ca.update_vote()
     return ca.get_state_as_string()
 
 

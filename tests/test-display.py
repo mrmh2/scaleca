@@ -6,7 +6,7 @@ import numpy as np
 
 parent, cdir = os.path.split(os.path.dirname(__file__))
 sys.path.append(parent)
-from ca_display import CARep, TextDisplay, CursesDisplay
+from scaleca.ca_display import CARep, TextDisplay, CursesDisplay
 from scaleca.ca_life import CA
 
 def test_curses_display(ca):
