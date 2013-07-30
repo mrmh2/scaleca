@@ -4,7 +4,13 @@ requests, and respond as follows:
 
 'RUN' - run a single timestep of the CA and return the updated state"""
 
+import os
+import sys
+
 import zmq
+
+parent, cdir = os.path.split(os.path.dirname(__file__))
+sys.path.append(parent)
 from scaleca.ca_life import CA
 
 def init_server(port):

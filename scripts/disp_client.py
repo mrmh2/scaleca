@@ -4,9 +4,14 @@
 Connects to server, then constructs simple update loop which sends a command to
 the server to run a simulation timestep, then displays the results."""
 
+import os
+import sys
+
 import zmq
 import numpy as np
 
+parent, cdir = os.path.split(os.path.dirname(__file__))
+sys.path.append(parent)
 from scaleca.disp_simple import CADisplay
 
 def connect_to_server(port):
