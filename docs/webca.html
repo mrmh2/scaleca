@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Web CA example</title>
+    <script src="https://d396qusza40orc.cloudfront.net/startup%2Fcode%2Fjquery.js"></script>
+    <script>
+      var display_func = function() {
+        $('.result').html(data);
+      }
+      var grab_and_disp = function() {
+        $.get('http://localhost:5000/cainterface', function(data) {
+          $('.result').html(data);
+        });
+      }
+
+      window.onload = grab_and_disp
+    </script>
+  </head>
+  <body>
+    <h1>Web CA example</h1>
+    <div class="result"></div>
+  </body>
+</html>
