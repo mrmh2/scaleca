@@ -9,9 +9,11 @@ import sys
 
 import zmq
 
-parent, cdir = os.path.split(os.path.dirname(__file__))
-sys.path.append(parent)
-from scaleca.ca_life import CA
+def setup():
+    parent, cdir = os.path.split(os.path.dirname(__file__))
+    sys.path.append(parent)
+    from scaleca.ca_life import CA
+    globals()['CA'] = CA
 
 def init_server(port):
     context = zmq.Context()
@@ -36,6 +38,7 @@ def listen_loop(socket, ca):
         socket.send(ret)
 
 def main():
+    setup()
     port = "5556"
     socket = init_server(port)
     test_ca = CA(10, 10)

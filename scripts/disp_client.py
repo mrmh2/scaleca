@@ -10,9 +10,12 @@ import sys
 import zmq
 import numpy as np
 
-parent, cdir = os.path.split(os.path.dirname(__file__))
-sys.path.append(parent)
-from scaleca.disp_simple import CADisplay
+
+def setup():
+    parent, cdir = os.path.split(os.path.dirname(__file__))
+    sys.path.append(parent)
+    from scaleca.disp_simple import CADisplay
+    globals()['CADisplay'] = CADisplay
 
 def connect_to_server(port):
     context = zmq.Context()
@@ -43,6 +46,7 @@ def make_update_loop(socket):
     return update_loop
 
 def main():
+    setup()
     port = "5556"
     socket = connect_to_server(port)
 
