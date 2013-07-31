@@ -1,0 +1,3 @@
+RUN - run simulation and return state
+GETSTATE - return current state
+INITSTATE [state] - initialise state to [state]
