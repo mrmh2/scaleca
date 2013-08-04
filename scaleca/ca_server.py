@@ -4,8 +4,9 @@ def run_sim(ca):
     ca.update()
     return ca.get_state_as_string()
 
-def get_state():
-    pass
+def get_state(ca):
+    return ca.get_state_as_string()
+
 
 def set_state():
     pass
