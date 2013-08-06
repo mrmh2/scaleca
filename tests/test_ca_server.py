@@ -45,19 +45,44 @@ def run_server():
     caserver = CAServer(ca)
     caserver.serve_forever()
 
-def main():
-    setup()
-    p = multiprocessing.Process(target=run_server)
-    p.start()
-    time.sleep(1)
-
-    socket = connect_to_server('5556')
+def test_getstate(socket):
     socket.send('GETSTATE')
     message = socket.recv()
     state = unpack_string_rep(message)
     assert(state[10, 10] == 1)
+    assert(state[5, 5] == 0)
 
+def test_setcell(socket):
+    socket.send('SETCELL 5 5 1')
+    message = socket.recv()
+    assert(message == 'SET')
+
+    socket.send('GETSTATE')
+    message = socket.recv()
+    state = unpack_string_rep(message)
+    assert(state[5, 5] == 1)
+
+def setup_server(port):
+    p = multiprocessing.Process(target=run_server)
+    p.start()
+    time.sleep(1)
+
+    socket = connect_to_server(port)
+
+    return p, socket
+    
+def teardown_server(p):
     p.terminate()
+
+def main():
+    setup()
+
+    p, socket = setup_server('5556')
+
+    test_getstate(socket)
+    test_setcell(socket)
+
+    teardown_server(p)
 
 if __name__ == '__main__':
     main()

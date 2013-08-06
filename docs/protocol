@@ -1,5 +1,6 @@
 RUN - run simulation and return state
 GETSTATE - return current state
 INITSTATE [state] - initialise state to [state]
+SETCELL [row] [col] [value] - set cell in row, col to value. Return SET or ERROR
 SYNCSTATE - get state and tag for state
 GETDELTA [tag] - supply tag and get state change
