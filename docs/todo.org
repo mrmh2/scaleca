@@ -14,3 +14,7 @@
 ** TODO Unit tests
 ** TODO Speed tests
 ** TODO Simple CA in C
+
+* Tests
+** ca_server
+*** TODO Test edge/boundary cases
