@@ -11,6 +11,7 @@ public:
   void dump();
   void fill_random();
   int *state_data; // FIXME - this should be private and properly inherited
+  int *next_state;
   int nrows, ncols;
   int real_nrows, real_ncols;
 };
@@ -25,14 +26,30 @@ public:
   //  CALife(int, int);
 };
 
+class CAVote: public CA {
+public:
+  CAVote(int in_nrows, int in_ncols) : CA(in_nrows, in_ncols) {}
+  void update();
+};
 
 
 void CALife::update()
 {
-  int r = 5;
-  int c = 5;
+  int h8[8][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
 
-  cout << state_data[(1 + c) + (1 + r) * real_ncols] << endl;
+  for(int r=0; r<nrows; r++)
+    for(int c=0; c<ncols; c++) {
+      int nsum = 0;
+      for (int i=0; i<8; i++) {
+	int ro = h8[i][0];
+	int co = h8[i][1];
+	nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
+      }
+      next_state[(1 + c) + (1 + r) * real_ncols] = (nsum == 3 || (nsum == 2 && state_data[(1 + c) + (1 + r) * real_ncols]));
+    }
+
+  swap(next_state, state_data);
+
 
 }
 
@@ -47,6 +64,7 @@ CA::CA(int in_nrows, int in_ncols) : nrows(in_nrows)
   cout << "Constructing " << nrows << "x" << ncols << endl;
 
   state_data = new int[real_nrows * real_ncols]();
+  next_state = new int[real_nrows * real_ncols]();
   //state_data = (int *) malloc(sizeof(int) * (nrows + 2) * (ncols + 2));
   //  memset(state_data, 0, sizeof(int) * (nrows + 2) * (ncols + 2));
 }
@@ -87,7 +105,9 @@ int main(int argc, char *argv[])
   ca.set(5, 6, 1);
   //  ca.fill_random();
   ca.dump();
-  ca.update();
-  ca.dump();
+  for (int i=0; i<1000; i++) {
+    ca.update();
+    ca.dump();
+  }
   return 0;
 }
