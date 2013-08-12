@@ -1,7 +1,6 @@
 #include<iostream>
 #include<cstdlib>
 
-
 using namespace std;
 
 class CA {
@@ -14,6 +13,7 @@ public:
   int *next_state;
   int nrows, ncols;
   int real_nrows, real_ncols;
+  void wrap_boundary();
 };
 
 
@@ -37,14 +37,7 @@ void CALife::update()
 {
   int h8[8][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
 
-
-  for(int c=0; c<ncols; c++) {
-    state_data[(1 + c)] = state_data[(1 + c) + (nrows) * real_ncols];
-  }
-  for(int r=0; r<nrows; r++) {
-    state_data[(1 + ncols) + r * real_ncols] = state_data[1 + r * real_ncols];
-    state_data[r * real_ncols] = state_data[(ncols) + r * real_ncols];
-  }
+  wrap_boundary();
 
   for(int r=0; r<nrows; r++)
     for(int c=0; c<ncols; c++) {
@@ -89,12 +82,38 @@ void CA::set(int row, int col, int value)
 
 void CA::dump()
 {
+  // Dump CA state to terminal, including border regions
+
+  // Top row of ghost region
+  cout << state_data[0] << "|";
+  for(int c=1; c<ncols + 1; c++) cout << state_data[c];
+  cout << "|" << state_data[real_ncols-1] << endl;
+
+  // Separator (purely visual)
+  cout << "-+";
+  for(int c=1; c<ncols + 1; c++) cout << "-";
+  cout << "+-" << endl;
+
+  // Main part of CA state
   for(int r=1; r<nrows + 1; r++) {
+    cout << state_data[r * real_ncols] << "|";
     for(int c=1; c<ncols + 1; c++) {
       cout << state_data[c + r * (ncols + 2)];
     }
-    cout << endl;
+    cout << "|" << state_data[ncols + 1 + (r * real_ncols)] << endl;
   }
+
+  // Lower separator (visual again)
+  cout << "-+";
+  for(int c=1; c<ncols + 1; c++) cout << "-";
+  cout << "+-" << endl;
+
+  // Bottom row of ghost region
+  cout << state_data[(real_nrows - 1) * real_ncols] << "|";
+  for(int c=1; c<ncols + 1; c++) cout << state_data[c + (real_nrows - 1) * real_ncols];
+  cout << "|" << state_data[(real_ncols - 1) + (real_nrows - 1) * real_ncols] << endl;
+
+  cout << endl;
 }
 
 void CA::fill_random()
@@ -104,8 +123,47 @@ void CA::fill_random()
       state_data[1 + c + (r + 1) * (real_ncols)] = rand() % 2;
 }
 
+void CA::wrap_boundary()
+{
+  /* Implement wrapped bounday conditions by setting top row of ghost region
+     to bottom row of CA state and so on */
+     
+  // Bottom row of ghost region
+  for(int c=1; c<ncols+1; c++) {
+    state_data[c + (real_nrows - 1) * real_ncols] = state_data[c + real_ncols];
+  }
 
-int main(int argc, char *argv[])
+  // Top row of ghost region
+  for(int c=1; c<ncols+1; c++) {
+     state_data[c] = state_data[c + (nrows) * real_ncols];
+  }
+
+  // Left column of ghost region
+  for(int r=1; r<nrows+1; r++) {
+    state_data[r * real_ncols] = state_data[(ncols) + r * real_ncols];
+  }
+
+  // Right column of ghost region
+  for(int r=1; r<nrows+1; r++) {
+    state_data[real_ncols - 1 + r * real_ncols] = state_data[1 + r * real_ncols];
+  }
+
+
+  // Top left corner
+  state_data[0] = state_data[ncols + nrows * real_ncols];
+
+  // Bottom right corner
+  state_data[(real_ncols - 1) + (real_nrows - 1) * real_ncols] = state_data[1 + real_ncols];
+
+  // Top right corner
+  state_data[real_ncols - 1] = state_data[1 + (real_nrows - 2) * real_ncols];
+
+  // Bottom left corner
+  state_data[(real_nrows - 1) * real_ncols] = state_data[(real_ncols - 2) + real_ncols];
+
+}
+
+int test_glider()
 {
   CALife ca(10, 10);
   ca.dump();
@@ -116,9 +174,25 @@ int main(int argc, char *argv[])
   ca.set(3, 5, 1);
   //  ca.fill_random();
   ca.dump();
-  for (int i=0; i<100; i++) {
+  for (int i=0; i<150; i++) {
     ca.update();
     ca.dump();
   }
+}
+
+void test_wrap()
+{
+  CALife ca(15, 15);
+  srand(time(0));
+  ca.fill_random();
+  ca.dump();
+  ca.wrap_boundary();
+  ca.dump();
+
+}
+
+int main(int argc, char *argv[])
+{
+  test_glider();
   return 0;
 }
