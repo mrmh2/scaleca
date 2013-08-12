@@ -37,6 +37,15 @@ void CALife::update()
 {
   int h8[8][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
 
+
+  for(int c=0; c<ncols; c++) {
+    state_data[(1 + c)] = state_data[(1 + c) + (nrows) * real_ncols];
+  }
+  for(int r=0; r<nrows; r++) {
+    state_data[(1 + ncols) + r * real_ncols] = state_data[1 + r * real_ncols];
+    state_data[r * real_ncols] = state_data[(ncols) + r * real_ncols];
+  }
+
   for(int r=0; r<nrows; r++)
     for(int c=0; c<ncols; c++) {
       int nsum = 0;
@@ -103,9 +112,11 @@ int main(int argc, char *argv[])
   ca.set(5, 5, 1);
   ca.set(5, 4, 1);
   ca.set(5, 6, 1);
+  ca.set(4, 6, 1);
+  ca.set(3, 5, 1);
   //  ca.fill_random();
   ca.dump();
-  for (int i=0; i<1000; i++) {
+  for (int i=0; i<100; i++) {
     ca.update();
     ca.dump();
   }
