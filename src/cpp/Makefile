@@ -1,7 +1,9 @@
+CFLAGS=-O3
+
 all: cppca cppserver
 
 cppca: cppca.cpp
-	g++ cppca.cpp -o cppca
+	g++ $(CFLAGS) cppca.cpp -o cppca
 
 cppserver: cppserver.cpp
 	g++ cppserver.cpp -lzmq -o cppserver
