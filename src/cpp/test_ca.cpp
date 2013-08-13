@@ -1,4 +1,6 @@
 #include"cppca.h"
+#include<ctime>
+#include<sys/time.h>
 
 using namespace std;
 
@@ -14,7 +16,6 @@ double read_timer( )
   gettimeofday( &end, NULL );
   return (end.tv_sec - start.tv_sec) + 1.0e-6 * (end.tv_usec - start.tv_usec);
 }
-
 
 int test_glider()
 {
@@ -85,13 +86,32 @@ void test_timing(){
     }
   }
 }
+
+void test_save_state()
+{
+  CAVote ca(10, 10);
+  srand(0);
+  ca.fill_random();
+  ca.dump();
+  ca.save_state("vstate.cas");
+}
     
+void test_read_state()
+{
+  CAVote ca(10, 10);
+
+  ca.read_state("vstate.cas");
+  ca.dump();
+}
+
 int main(int argc, char *argv[])
 {
-  //  test_glider();
-  //  test_vote();
+  //test_glider();
+  //test_vote();
     //  test_dump();
 
-  test_timing();
+  //test_timing();
+  //test_save_state();
+  test_read_state();
   return 0;
 }

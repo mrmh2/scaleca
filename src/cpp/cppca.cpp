@@ -51,23 +51,18 @@ void CAVote::update()
 
   swap(next_state, state_data);
 
-
 }
 
-CA::CA(int in_nrows, int in_ncols) : nrows(in_nrows)
+CA::CA(int in_nrows, int in_ncols) : 
+nrows(in_nrows), 
+ncols(in_ncols),
+state_data((in_nrows + 2) * (in_ncols + 2)),
+next_state((in_nrows + 2) * (in_ncols + 2))
 {
-  //  nrows = in_nrows;
-  ncols = in_ncols;
-
   real_nrows = in_nrows + 2;
   real_ncols = in_ncols + 2;
   
   cout << "Constructing " << nrows << "x" << ncols << endl;
-
-  state_data = new int[real_nrows * real_ncols]();
-  next_state = new int[real_nrows * real_ncols]();
-  //state_data = (int *) malloc(sizeof(int) * (nrows + 2) * (ncols + 2));
-  //  memset(state_data, 0, sizeof(int) * (nrows + 2) * (ncols + 2));
 }
 
 void CA::set(int row, int col, int value)
@@ -118,6 +113,42 @@ void CA::dump()
   cout << "|" << get_cell(nrows, ncols);
 
   cout << endl;
+}
+
+void CA::save_state(string filename)
+{
+  cout << "Saving state to " << filename << endl;
+
+  ofstream ofile;
+  ofile.open(filename.c_str());
+  ofile << nrows << endl;
+  ofile << ncols << endl;
+  copy(state_data.begin(), state_data.end(), ostream_iterator<int>(ofile));
+  ofile.close();
+}
+
+int convert(char in) { return (int) in - 48; }
+
+void CA::read_state(string filename)
+{
+  cout << "Reading state from " << filename << endl;
+
+  ifstream ifile(filename.c_str());
+
+  int in_nrows;
+  int in_ncols;
+
+  ifile >> in_nrows;
+  ifile >> in_ncols;
+
+  if ( !(in_nrows == nrows && in_ncols == ncols) ) {
+    cout << "Size mismatch" << endl;
+  }
+
+  cout << "Read " << in_nrows << "x" << in_ncols << endl;
+  istream_iterator<char> start(ifile), end;
+  vector<char> file_state(start, end);
+  transform(file_state.begin(), file_state.end(), state_data.begin(), convert);
 }
 
 void CA::fill_random()

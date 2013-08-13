@@ -1,10 +1,15 @@
 #include<iostream>
+#include<fstream>
 #include<cstdlib>
-#include<ctime>
-#include<sys/time.h>
+#include<string>
+#include<vector>
+#include<iterator>
+#include<algorithm>
 
 #ifndef _cppca_h
 #define _cppca_h
+
+using namespace std;
 
 class CA {
 public:
@@ -14,10 +19,13 @@ public:
   void dump();
   void fill_random();
   void wrap_boundary();
-  //  void save_state(string filename);
+  void save_state(string filename);
+  void read_state(string filename);
  protected:
-  int *state_data; // FIXME - this should be private and properly inherited
-  int *next_state;
+  //  int *state_data; // FIXME - this should be private and properly inherited
+  //  int *next_state;
+  vector<int> state_data;
+  vector<int> next_state;
   int nrows, ncols;
   int real_nrows, real_ncols;
 };
