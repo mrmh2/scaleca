@@ -104,6 +104,12 @@ void test_read_state()
   ca.dump();
 }
 
+void test_construct_from_file()
+{
+  CAVote ca("vstate.cas");
+  ca.dump();
+}
+
 int main(int argc, char *argv[])
 {
   //test_glider();
@@ -112,6 +118,7 @@ int main(int argc, char *argv[])
 
   //test_timing();
   //test_save_state();
-  test_read_state();
+  //  test_read_state();
+  test_construct_from_file();
   return 0;
 }

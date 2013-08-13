@@ -14,6 +14,7 @@ using namespace std;
 class CA {
 public:
   CA(int in_nrows, int ncols); 
+  CA(string filename);
   void set(int row, int col, int value);
   int get_cell(int row, int col);
   void dump();
@@ -40,6 +41,7 @@ public:
 class CAVote: public CA {
 public:
   CAVote(int in_nrows, int in_ncols) : CA(in_nrows, in_ncols) {}
+  CAVote(string filename) : CA(filename) {}
   void update();
 };
 

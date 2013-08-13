@@ -2,6 +2,8 @@
 
 using namespace std;
 
+int convert(char in);
+
 void CALife::update()
 {
   int h8[8][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
@@ -13,8 +15,6 @@ void CALife::update()
       int nsum = 0;
       for (int i=0; i<8; i++) {
 	int ro = h8[i][0];
-
-
 	int co = h8[i][1];
 	nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
       }
@@ -22,8 +22,6 @@ void CALife::update()
     }
 
   swap(next_state, state_data);
-
-
 }
 
 void CAVote::update()
@@ -63,6 +61,25 @@ next_state((in_nrows + 2) * (in_ncols + 2))
   real_ncols = in_ncols + 2;
   
   cout << "Constructing " << nrows << "x" << ncols << endl;
+}
+
+CA::CA(string filename)
+{
+  ifstream ifile(filename.c_str());
+
+  ifile >> nrows;
+  ifile >> ncols;
+
+  real_nrows = nrows + 2;
+  real_ncols = ncols + 2;
+
+  cout << "Read " << nrows << "x" << ncols << endl;
+  istream_iterator<char> start(ifile), end;
+  vector<char> file_state(start, end);
+  state_data.reserve(file_state.size());
+  next_state.reserve(file_state.size());
+  transform(file_state.begin(), file_state.end(), state_data.begin(), convert);
+
 }
 
 void CA::set(int row, int col, int value)
