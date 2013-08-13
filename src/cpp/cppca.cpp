@@ -75,6 +75,7 @@ void CALife::update()
 void CAVote::update()
 {
   int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
+  int ur[9] = {0, 0, 0, 0, 1, 0, 1, 1, 1};
 
   int ro, co;
 
@@ -88,8 +89,9 @@ void CAVote::update()
 	co = h9[i][1];
 	nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
       }
-      if (nsum == 4 || nsum > 5) next_state[(1 + c) + (1 + r) * real_ncols] = 1;
-      else next_state[(1 + c) + (1 + r) * real_ncols] = 0;
+      //      if (nsum == 4 || nsum > 5) next_state[(1 + c) + (1 + r) * real_ncols] = 1;
+      //      else next_state[(1 + c) + (1 + r) * real_ncols] = 0;
+      next_state[(1 + c) + (1 + r) * real_ncols] = ur[nsum];
       
     }
 
