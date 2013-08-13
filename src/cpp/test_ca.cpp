@@ -124,9 +124,18 @@ void test_life()
   assert(ca.sum_state() == 3);
 }
 
+void test_copy()
+{
+  CALife original("glider.cas");
+  original.dump();
+  CALife cacopy = original;
+  cacopy.dump();
+}
+
 int main(int argc, char *argv[])
 {
-  test_glider();
+  test_copy();
+  // test_glider();
   //test_vote();
     //  test_dump();
 

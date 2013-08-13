@@ -16,6 +16,7 @@ class CA {
 public:
   CA(int in_nrows, int ncols); 
   CA(string filename);
+  CA(const CA &orig);
   void set_cell(int row, int col, int value);
   int get_cell(int row, int col);
   void dump();
@@ -36,6 +37,7 @@ public:
 class CALife: public CA {
 public:
  CALife(int in_nrows, int in_ncols) : CA(in_nrows, in_ncols) {}
+  CALife(string filename) : CA(filename) {}
   void update();
   //  CALife(int, int);
 };

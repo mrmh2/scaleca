@@ -82,6 +82,20 @@ CA::CA(string filename)
 
 }
 
+CA::CA(const CA &orig)
+{
+  state_data = orig.state_data;
+  next_state = orig.next_state;
+  nrows = orig.nrows;
+  ncols = orig.ncols;
+  real_nrows = orig.real_nrows;
+  real_ncols = orig.real_ncols;
+  cout << "copy" << endl;
+  cout << orig.nrows;
+  cout << state_data.size() << endl;
+  cout << orig.state_data.size() << endl;
+}
+
 int CA::sum_state()
 {
   return accumulate(state_data.begin(), state_data.end(), 0);
