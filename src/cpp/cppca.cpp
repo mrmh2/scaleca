@@ -57,7 +57,7 @@ void CALife::update()
 void CAVote::update()
 {
   int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
-
+  //  int h9[9][2] = { {-1
   wrap_boundary();
 
   for(int r=0; r<nrows; r++)
@@ -75,6 +75,35 @@ void CAVote::update()
 
   swap(next_state, state_data);
 
+
+}
+
+void static_update(CAVote ca)
+{
+  int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
+
+  ca.wrap_boundary();
+  int nrows = ca.nrows;
+  int ncols = ca.ncols;
+  int real_nrows = ca.real_nrows;
+  int real_ncols = ca.real_ncols;
+  int *state_data = ca.state_data;
+  int *next_state = ca.next_state;
+
+  for(int r=0; r<nrows; r++)
+    for(int c=0; c<ncols; c++) {
+      int nsum = 0;
+      for (int i=0; i<9; i++) {
+	int ro = h9[i][0];
+	int co = h9[i][1];
+	nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
+      }
+      if (nsum == 4 || nsum > 5) next_state[(1 + c) + (1 + r) * real_ncols] = 1;
+      else next_state[(1 + c) + (1 + r) * real_ncols] = 0;
+      
+    }
+
+  swap(next_state, state_data);
 
 }
 
@@ -216,13 +245,14 @@ void test_wrap()
 
 void test_vote()
 {
-  CAVote ca(50, 50);
+  CAVote ca(900, 1200);
   srand(time(0));
   ca.fill_random();
-  ca.dump();
+  //  ca.dump();
 
-  for (int i=0;i<1000;i++) {
+  for (int i=0;i<10;i++) {
     ca.update();
+    //    static_update(ca);
     //    ca.dump();			
   }
 }
