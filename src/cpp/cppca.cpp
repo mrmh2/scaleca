@@ -9,6 +9,7 @@ class CA {
 public:
   CA(int in_nrows, int ncols); 
   void set(int row, int col, int value);
+  int get_cell(int row, int col);
   void dump();
   void fill_random();
   int *state_data; // FIXME - this should be private and properly inherited
@@ -104,6 +105,14 @@ void CA::set(int row, int col, int value)
 
   state_data[crow * real_ncols + ccol] = value;
 }
+
+int CA::get_cell(int row, int col)
+{
+  int crow = row + 1;
+  int ccol = col + 1;
+
+  return state_data[crow * real_ncols + ccol];
+}
   
 
 void CA::dump()
@@ -111,33 +120,31 @@ void CA::dump()
   // Dump CA state to terminal, including border regions
 
   // Top row of ghost region
-  cout << state_data[0] << "|";
-  for(int c=1; c<ncols + 1; c++) cout << state_data[c];
-  cout << "|" << state_data[real_ncols-1] << endl;
+  cout << get_cell(-1, -1) << "|";
+  for(int c=0; c<ncols; c++) cout << get_cell(-1, c);
+  cout << "|" << get_cell(-1, ncols) << endl;
 
   // Separator (purely visual)
   cout << "-+";
-  for(int c=1; c<ncols + 1; c++) cout << "-";
+  for(int c=0; c<ncols; c++) cout << "-";
   cout << "+-" << endl;
 
   // Main part of CA state
-  for(int r=1; r<nrows + 1; r++) {
-    cout << state_data[r * real_ncols] << "|";
-    for(int c=1; c<ncols + 1; c++) {
-      cout << state_data[c + r * (ncols + 2)];
-    }
-    cout << "|" << state_data[ncols + 1 + (r * real_ncols)] << endl;
+  for(int r=0; r<nrows; r++) {
+    cout << get_cell(r, -1) << "|";		
+    for(int c=0; c<ncols; c++) cout << get_cell(r, c);
+    cout << "|" << get_cell(r, ncols) << endl;
   }
 
   // Lower separator (visual again)
   cout << "-+";
-  for(int c=1; c<ncols + 1; c++) cout << "-";
+  for(int c=0; c<ncols; c++) cout << "-";
   cout << "+-" << endl;
 
   // Bottom row of ghost region
-  cout << state_data[(real_nrows - 1) * real_ncols] << "|";
-  for(int c=1; c<ncols + 1; c++) cout << state_data[c + (real_nrows - 1) * real_ncols];
-  cout << "|" << state_data[(real_ncols - 1) + (real_nrows - 1) * real_ncols] << endl;
+  cout << get_cell(nrows, -1) << "|";
+  for (int c=0; c<ncols; c++) cout << get_cell(nrows, c);
+  cout << "|" << get_cell(nrows, ncols);
 
   cout << endl;
 }
@@ -230,9 +237,21 @@ void test_vote()
   }
 }
 
+void test_dump()
+{
+  CAVote ca(10, 10);
+  //srand(time(0));
+  ca.fill_random();
+  ca.dump();
+  ca.wrap_boundary();
+  ca.dump();
+
+}
+
 int main(int argc, char *argv[])
 {
   //  test_glider();
-  test_vote();
+  //  test_vote();
+  test_dump();
   return 0;
 }
