@@ -6,4 +6,4 @@ cppca: cppca.cpp
 	g++ $(CFLAGS) cppca.cpp -o cppca
 
 cppserver: cppserver.cpp
-	g++ cppserver.cpp -lzmq -o cppserver
+	g++ $(CFLAGS) cppserver.cpp -lzmq -o cppserver

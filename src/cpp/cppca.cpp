@@ -1,9 +1,22 @@
 #include<iostream>
 #include<cstdlib>
+#include<ctime>
+#include<sys/time.h>
 
 using namespace std;
 
-
+double read_timer( )
+{
+  static bool initialized = false;
+  static struct timeval start, end;
+  if( !initialized )
+    {
+      gettimeofday( &start, NULL );
+      initialized = true;
+    }
+  gettimeofday( &end, NULL );
+  return (end.tv_sec - start.tv_sec) + 1.0e-6 * (end.tv_usec - start.tv_usec);
+}
 
 class CA {
 public:
@@ -46,6 +59,8 @@ void CALife::update()
       int nsum = 0;
       for (int i=0; i<8; i++) {
 	int ro = h8[i][0];
+
+
 	int co = h8[i][1];
 	nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
       }
@@ -60,6 +75,7 @@ void CALife::update()
 void CAVote::update()
 {
   int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
+
   int ro, co;
 
   wrap_boundary();
@@ -79,6 +95,35 @@ void CAVote::update()
 
   swap(next_state, state_data);
 
+
+}
+
+void static_update(CAVote ca)
+{
+  int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
+
+  ca.wrap_boundary();
+  int nrows = ca.nrows;
+  int ncols = ca.ncols;
+  int real_nrows = ca.real_nrows;
+  int real_ncols = ca.real_ncols;
+  int *state_data = ca.state_data;
+  int *next_state = ca.next_state;
+
+  for(int r=0; r<nrows; r++)
+    for(int c=0; c<ncols; c++) {
+      int nsum = 0;
+      for (int i=0; i<9; i++) {
+	int ro = h9[i][0];
+	int co = h9[i][1];
+	nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
+      }
+      if (nsum == 4 || nsum > 5) next_state[(1 + c) + (1 + r) * real_ncols] = 1;
+      else next_state[(1 + c) + (1 + r) * real_ncols] = 0;
+      
+    }
+
+  swap(next_state, state_data);
 
 }
 
@@ -233,9 +278,11 @@ void test_vote()
 
   for (int i=0;i<10;i++) {
     ca.update();
+    //    static_update(ca);
     //    ca.dump();			
   }
 }
+
 
 void test_dump()
 {
@@ -248,10 +295,28 @@ void test_dump()
 
 }
 
+void test_timing(){
+  CAVote ca(1000, 1000);
+  ca.fill_random();
+
+  int gen_count = 0;
+  double start = read_timer();
+  while (1) {
+    ca.update();
+    gen_count++;
+    if (gen_count%50 == 0) {
+      double gen_time = (read_timer() - start) / (double) gen_count;
+      cout << gen_time << "ms per generation." << endl;
+    }
+  }
+}
+    
 int main(int argc, char *argv[])
 {
   //  test_glider();
   //  test_vote();
-  test_dump();
+    //  test_dump();
+
+  test_timing();
   return 0;
 }
