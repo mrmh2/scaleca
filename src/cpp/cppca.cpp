@@ -2,9 +2,6 @@
 
 using namespace std;
 
-
-
-
 void CALife::update()
 {
   int h8[8][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
@@ -57,35 +54,6 @@ void CAVote::update()
 
 }
 
-void static_update(CAVote ca)
-{
-  int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
-
-  ca.wrap_boundary();
-  int nrows = ca.nrows;
-  int ncols = ca.ncols;
-  int real_nrows = ca.real_nrows;
-  int real_ncols = ca.real_ncols;
-  int *state_data = ca.state_data;
-  int *next_state = ca.next_state;
-
-  for(int r=0; r<nrows; r++)
-    for(int c=0; c<ncols; c++) {
-      int nsum = 0;
-      for (int i=0; i<9; i++) {
-	int ro = h9[i][0];
-	int co = h9[i][1];
-	nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
-      }
-      if (nsum == 4 || nsum > 5) next_state[(1 + c) + (1 + r) * real_ncols] = 1;
-      else next_state[(1 + c) + (1 + r) * real_ncols] = 0;
-      
-    }
-
-  swap(next_state, state_data);
-
-}
-
 CA::CA(int in_nrows, int in_ncols) : nrows(in_nrows)
 {
   //  nrows = in_nrows;
@@ -117,7 +85,6 @@ int CA::get_cell(int row, int col)
 
   return state_data[crow * real_ncols + ccol];
 }
-  
 
 void CA::dump()
 {
@@ -185,7 +152,6 @@ void CA::wrap_boundary()
     state_data[real_ncols - 1 + r * real_ncols] = state_data[1 + r * real_ncols];
   }
 
-
   // Top left corner
   state_data[0] = state_data[ncols + nrows * real_ncols];
 
@@ -199,4 +165,3 @@ void CA::wrap_boundary()
   state_data[(real_nrows - 1) * real_ncols] = state_data[(real_ncols - 2) + real_ncols];
 
 }
-

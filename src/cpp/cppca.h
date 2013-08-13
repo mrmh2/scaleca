@@ -13,11 +13,13 @@ public:
   int get_cell(int row, int col);
   void dump();
   void fill_random();
+  void wrap_boundary();
+  //  void save_state(string filename);
+ protected:
   int *state_data; // FIXME - this should be private and properly inherited
   int *next_state;
   int nrows, ncols;
   int real_nrows, real_ncols;
-  void wrap_boundary();
 };
 
 class CALife: public CA {
