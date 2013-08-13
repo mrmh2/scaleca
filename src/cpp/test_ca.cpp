@@ -1,6 +1,7 @@
 #include"cppca.h"
 #include<ctime>
 #include<sys/time.h>
+#include<assert.h>
 
 using namespace std;
 
@@ -21,11 +22,11 @@ int test_glider()
 {
   CALife ca(10, 10);
   ca.dump();
-  ca.set(5, 5, 1);
-  ca.set(5, 4, 1);
-  ca.set(5, 6, 1);
-  ca.set(4, 6, 1);
-  ca.set(3, 5, 1);
+  ca.set_cell(5, 5, 1);
+  ca.set_cell(5, 4, 1);
+  ca.set_cell(5, 6, 1);
+  ca.set_cell(4, 6, 1);
+  ca.set_cell(3, 5, 1);
   //  ca.fill_random();
   ca.dump();
   for (int i=0; i<150; i++) {
@@ -110,15 +111,29 @@ void test_construct_from_file()
   ca.dump();
 }
 
+void test_life()
+{
+  CALife ca(5, 5);
+  ca.set_cell(1, 2, 1);
+  ca.set_cell(2, 2, 1);
+  ca.set_cell(3, 2, 1);
+  ca.dump();
+  ca.update();
+  ca.dump();
+
+  assert(ca.sum_state() == 3);
+}
+
 int main(int argc, char *argv[])
 {
-  //test_glider();
+  test_glider();
   //test_vote();
     //  test_dump();
 
   //test_timing();
   //test_save_state();
   //  test_read_state();
-  test_construct_from_file();
+  //  test_construct_from_file();
+  //test_life();
   return 0;
 }

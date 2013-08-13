@@ -82,7 +82,12 @@ CA::CA(string filename)
 
 }
 
-void CA::set(int row, int col, int value)
+int CA::sum_state()
+{
+  return accumulate(state_data.begin(), state_data.end(), 0);
+}
+
+void CA::set_cell(int row, int col, int value)
 {
   int crow = row + 1;
   int ccol = col + 1;
@@ -177,7 +182,7 @@ void CA::fill_random()
 
 void CA::wrap_boundary()
 {
-  /* Implement wrapped bounday conditions by setting top row of ghost region
+  /* Implement wrapped bounday conditions by set_cellting top row of ghost region
      to bottom row of CA state and so on */
      
   // Bottom row of ghost region

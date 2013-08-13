@@ -5,6 +5,7 @@
 #include<vector>
 #include<iterator>
 #include<algorithm>
+#include<numeric>
 
 #ifndef _cppca_h
 #define _cppca_h
@@ -15,13 +16,14 @@ class CA {
 public:
   CA(int in_nrows, int ncols); 
   CA(string filename);
-  void set(int row, int col, int value);
+  void set_cell(int row, int col, int value);
   int get_cell(int row, int col);
   void dump();
   void fill_random();
   void wrap_boundary();
   void save_state(string filename);
   void read_state(string filename);
+  int sum_state();
  protected:
   //  int *state_data; // FIXME - this should be private and properly inherited
   //  int *next_state;
