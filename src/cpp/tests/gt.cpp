@@ -39,6 +39,39 @@ TEST(CaBaseTest, CaLargeRead) {
   EXPECT_EQ(6122843, ca.sum_state());
 }
 
+TEST(CaBaseTest, CaGetCorner) {
+  CA ca("../edge-test.cas");
+
+  /* 0|00000|0
+     -+-----+-
+     0|10203|0
+     0|00000|0
+     0|40005|0
+     0|00000|0
+     0|60708|0
+     -+-----+-
+     0|00000|0 */
+
+  EXPECT_EQ(1, ca.get_corner(NW));
+  EXPECT_EQ(3, ca.get_corner(NE));
+  EXPECT_EQ(6, ca.get_corner(SW));
+  EXPECT_EQ(8, ca.get_corner(SE));
+}
+
+TEST(CaBaseTest, CaSetCorner) {
+  CA ca(5, 5);
+
+  ca.set_corner(NW, 1);
+  ca.set_corner(NE, 3);
+  ca.set_corner(SW, 6);
+  ca.set_corner(SE, 8);
+
+  EXPECT_EQ(1, ca.get_cell(-1, -1));
+  EXPECT_EQ(3, ca.get_cell(-1, 5));
+  EXPECT_EQ(6, ca.get_cell(5, -1));
+  EXPECT_EQ(8, ca.get_cell(5, 5));
+}
+
 TEST(CaLifeTest, ThreeLineOK) {
   CALife ca(5, 5);
   ca.set_cell(1, 2, 1);

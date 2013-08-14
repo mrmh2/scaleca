@@ -1,4 +1,4 @@
-xp#include"cppca.h"
+#include"cppca.h"
 
 using namespace std;
 
@@ -45,7 +45,7 @@ void supdate(int *sd, int *ns, int nrows, int ncols)
 
   int ro, co, r, c, nsum, i;
 
-#pragma omp parallel for private(c, nsum, ro, co, i) schedule(guided, 10)
+  //#pragma omp parallel for private(c, nsum, ro, co, i) schedule(guided, 10)
   for(r=0; r<nrows; r++)
     for(c=0; c<ncols; c++) {
       nsum = 0;
@@ -55,9 +55,7 @@ void supdate(int *sd, int *ns, int nrows, int ncols)
         nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
       }
       next_state[(1 + c) + (1 + r) * real_ncols] = ur[nsum];
-      
     }
-
 }
 
 CA::CA(int in_nrows, int in_ncols) : 
@@ -185,6 +183,11 @@ void CA::read_state(string filename)
 
   ifstream ifile(filename.c_str());
 
+  if (!ifile) {
+    cout << "ERROR: Couldn't open " << filename << endl;
+    exit(2);
+  }
+
   int in_nrows;
   int in_ncols;
 
@@ -245,4 +248,110 @@ void CA::wrap_boundary()
   // Bottom left corner
   state_data[(real_nrows - 1) * real_ncols] = state_data[(real_ncols - 2) + real_ncols];
 
+}
+
+vector<int> CA::get_border(border b)
+{
+  vector<int> border_vals;
+  int start, stride, size;
+
+  switch (b) 
+    {
+    case NORTH:
+      start = 1 + real_ncols;
+      stride = 1;
+      size = ncols;
+      break;
+    case SOUTH:
+      start = 1 + nrows * real_ncols;
+      stride = 1;
+      size = ncols;
+      break;
+    case EAST:
+      start = ncols + real_ncols;
+      stride = real_ncols;
+      size = nrows;
+      break;
+    case WEST:
+      start = 1 + real_ncols;
+      stride = real_ncols;
+      size = nrows;
+      break;
+    }
+    
+  for(int i=0;i<size;i++) {
+    border_vals.push_back(state_data[start + i * stride]);
+  }
+
+  return border_vals;
+}
+
+void CA::set_border(border b, vector<int> new_border)
+{
+  int start, stride, size;
+
+  switch (b) 
+    {
+    case NORTH:
+      start = 1;
+      stride = 1;
+      size = ncols;
+      break;
+    case SOUTH:
+      start = 1 + (1 + nrows) * real_ncols;
+      stride = 1;
+      size = ncols;
+      break;
+    case EAST:
+      start = 1 + ncols + real_ncols;
+      stride = real_ncols;
+      size = nrows;
+      break;
+    case WEST:
+      start = real_ncols;
+      stride = real_ncols;
+      size = nrows;
+      break;
+    default:
+      assert(0);
+    }
+    
+  for(int i=0;i<size;i++) {
+    //    border_vals.push_back(state_data[start + i * stride]);
+    state_data[start + i * stride] = new_border[i];
+  }
+}
+
+int CA::get_corner(corner co)
+{
+  switch (co)
+    {
+    case NW:
+      return get_cell(0, 0);
+    case NE:
+      return get_cell(0, ncols-1);
+    case SW:
+      return get_cell(nrows-1, 0);
+    case SE:
+      return get_cell(nrows-1, ncols-1);
+    }
+}
+
+void CA::set_corner(corner co, int new_val)
+{
+  switch (co)
+    {
+    case NW:
+      set_cell(-1, -1, new_val);
+      break;
+    case NE:
+      set_cell(-1, ncols, new_val);
+      break;
+    case SW:
+      set_cell(nrows, -1, new_val);
+      break;
+    case SE:
+      set_cell(nrows, ncols, new_val);
+      break;
+    }
 }

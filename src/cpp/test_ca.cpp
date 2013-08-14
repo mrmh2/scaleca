@@ -151,13 +151,74 @@ void create_large_vote()
   cout << "Created with sum " << ca.sum_state() << endl;
 }
 
+void dump_vector(vector<int> v)
+{
+  copy(v.begin(), v.end(), ostream_iterator<int>(cout, ""));
+  cout << endl;
+}
+
+void test_get_border()
+{
+  CA ca(10, 10);
+  ca.fill_random();
+  ca.dump();
+
+  dump_vector(ca.get_border(NORTH));
+  dump_vector(ca.get_border(SOUTH));
+  dump_vector(ca.get_border(EAST));
+  dump_vector(ca.get_border(WEST));
+}
+
+void test_set_border()
+{
+  CA ca(5, 5);
+  ca.dump();
+
+  vector<int> nb(5, 1);
+  vector<int> sb(5, 2);
+  vector<int> eb(5, 3);
+  vector<int> wb(5, 4);
+  ca.set_border(NORTH, nb);
+  ca.set_border(SOUTH, sb);
+  ca.set_border(WEST, wb);
+  ca.set_border(EAST, eb);
+  ca.dump();
+}
+
+void test_get_corner()
+{
+  CA ca("edge-test.cas");
+
+  ca.dump();
+}
+
+void create_test_ca()
+{
+  CA ca(5, 5);
+  ca.set_cell(0, 0, 1);
+  ca.set_cell(0, 2, 2);
+  ca.set_cell(0, 4, 3);
+  ca.set_cell(2, 0, 4);
+  ca.set_cell(2, 4, 5);
+  ca.set_cell(4, 0, 6);
+  ca.set_cell(4, 2, 7);
+  ca.set_cell(4, 4, 8);
+
+  ca.save_state("edge-test.cas");
+}
+
+		   
 int main(int argc, char *argv[])
 {
+  //  create_test_ca();
+  test_get_corner();
+  // test_get_border();
+  // test_set_border();
   //  create_large_vote();
   // test_wrap();
 
   //  test_copy();
-  test_vote();
+  //test_vote();
     //  test_dump();
 
   //test_timing();
