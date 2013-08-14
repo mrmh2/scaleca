@@ -69,7 +69,7 @@ TEST(CaVoteTest, TestLarge) {
   CAVote ca("../vote-6122843.cas");
   EXPECT_EQ(6122843, ca.sum_state());
   ca.update();
-  EXPECT_EQ(6124152, ca.sum_state());c
+  EXPECT_EQ(6124152, ca.sum_state());
   //  for(int g=0; g<10; g++) ca.update();
   //  EXPECT_EQ(6114928, ca.sum_state());
 }

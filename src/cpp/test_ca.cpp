@@ -55,15 +55,20 @@ void test_wrap()
 
 void test_vote()
 {
-  CAVote ca(900, 1200);
+  CAVote ca(10, 10);
   srand(time(0));
-  ca.fill_random();
-  //  ca.dump();
-  for (int i=0;i<10;i++) {
+  //  ca.fill_random();
+
+  ca.set_cell(5, 5, 1);
+  ca.set_cell(5, 6, 1);
+  ca.set_cell(6, 5, 1);
+  ca.set_cell(6, 6, 1);
+  ca.dump();
+  //  for (int i=0;i<10;i++) {
     ca.update();
     //    static_update(ca);
-    //    ca.dump();			
-  }
+    ca.dump();			
+    //  }
 }
 
 
@@ -152,7 +157,7 @@ int main(int argc, char *argv[])
   // test_wrap();
 
   //  test_copy();
-  //test_vote();
+  test_vote();
     //  test_dump();
 
   //test_timing();

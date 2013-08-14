@@ -3,6 +3,7 @@
 using namespace std;
 
 int convert(char in);
+void supdate(int *sd, int *ns, int nrows, int ncols);
 
 void CALife::update()
 {
@@ -33,21 +34,48 @@ void CAVote::update()
 
   wrap_boundary();
 
+  // for(int r=0; r<nrows; r++)
+  //   for(int c=0; c<ncols; c++) {
+  //     int nsum = 0;
+  //     for (int i=0; i<9; i++) {
+  // 	ro = h9[i][0];
+  // 	co = h9[i][1];
+  // 	nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
+  //     }
+  //     //      if (nsum == 4 || nsum > 5) next_state[(1 + c) + (1 + r) * real_ncols] = 1;
+  //     //      else next_state[(1 + c) + (1 + r) * real_ncols] = 0;
+  //     next_state[(1 + c) + (1 + r) * real_ncols] = ur[nsum];
+      
+  //   }
+
+  supdate(&state_data.front(), &next_state.front(), nrows, ncols);
+
+  swap(next_state, state_data);
+
+}
+
+void supdate(int *sd, int *ns, int nrows, int ncols)
+{
+  int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
+  int ur[10] = {0, 0, 0, 0, 1, 0, 1, 1, 1, 1};
+  int real_nrows = nrows + 2;
+  int real_ncols = ncols + 2;
+  int *state_data = sd;
+  int *next_state = ns;
+
+  int ro, co;
+
   for(int r=0; r<nrows; r++)
     for(int c=0; c<ncols; c++) {
       int nsum = 0;
       for (int i=0; i<9; i++) {
-	ro = h9[i][0];
-	co = h9[i][1];
-	nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
+        ro = h9[i][0];
+        co = h9[i][1];
+        nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
       }
-      //      if (nsum == 4 || nsum > 5) next_state[(1 + c) + (1 + r) * real_ncols] = 1;
-      //      else next_state[(1 + c) + (1 + r) * real_ncols] = 0;
       next_state[(1 + c) + (1 + r) * real_ncols] = ur[nsum];
       
     }
-
-  swap(next_state, state_data);
 
 }
 
