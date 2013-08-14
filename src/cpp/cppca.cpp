@@ -73,7 +73,7 @@ CA::CA(string filename)
   real_nrows = nrows + 2;
   real_ncols = ncols + 2;
 
-  cout << "Read " << nrows << "x" << ncols << endl;
+  //  cout << "Read " << nrows << "x" << ncols << endl;
   istream_iterator<char> start(ifile), end;
   vector<char> file_state(start, end);
   state_data.reserve(file_state.size());

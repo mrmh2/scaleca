@@ -138,9 +138,18 @@ void test_copy()
   cacopy.dump();
 }
 
+void create_large_vote()
+{
+  CAVote ca(3500, 3500);
+  ca.fill_random();
+  ca.save_state("vote-3k5-3k5.cas");
+  cout << "Created with sum " << ca.sum_state() << endl;
+}
+
 int main(int argc, char *argv[])
 {
-  test_wrap();
+  //  create_large_vote();
+  // test_wrap();
 
   //  test_copy();
   //test_vote();

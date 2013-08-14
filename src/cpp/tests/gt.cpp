@@ -34,6 +34,11 @@ TEST(CaBaseTest, CaWrapBoundary) {
 
 }
 
+TEST(CaBaseTest, CaLargeRead) {
+  CA ca("../vote-6122843.cas");
+  EXPECT_EQ(6122843, ca.sum_state());
+}
+
 TEST(CaLifeTest, ThreeLineOK) {
   CALife ca(5, 5);
   ca.set_cell(1, 2, 1);
@@ -60,6 +65,14 @@ TEST(CaLifeTest, TestGlider) {
   }
 }
 
+TEST(CaVoteTest, TestLarge) {
+  CAVote ca("../vote-6122843.cas");
+  EXPECT_EQ(6122843, ca.sum_state());
+  ca.update();
+  EXPECT_EQ(6124152, ca.sum_state());c
+  //  for(int g=0; g<10; g++) ca.update();
+  //  EXPECT_EQ(6114928, ca.sum_state());
+}
 
 int main(int argc, char *argv[])
 {

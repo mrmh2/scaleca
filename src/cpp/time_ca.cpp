@@ -19,11 +19,11 @@ double read_timer( )
 
 void test_timing()
 {
-  CAVote ca(2000, 2000);
+  CAVote ca(3500, 3500);
   ca.fill_random();
 
   int gen_count = 0;
-  int count_freq = 20;
+  int count_freq = 10;
   double start = read_timer();
   while (1) {
     ca.update();
