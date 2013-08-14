@@ -9,7 +9,7 @@ void CALife::update()
 {
   int h8[8][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
 
-  wrap_boundary();
+  nwrap_boundary();
 
   for(int r=0; r<nrows; r++)
     for(int c=0; c<ncols; c++) {
@@ -27,7 +27,7 @@ void CALife::update()
 
 void CAVote::update()
 {
-  wrap_boundary();
+  nwrap_boundary();
 
   supdate(&state_data.front(), &next_state.front(), nrows, ncols);
 
@@ -209,6 +209,19 @@ void CA::fill_random()
   for(int r=0; r<nrows; r++) 
     for(int c=0; c<ncols; c++)
       state_data[1 + c + (r + 1) * (real_ncols)] = rand() % 2;
+}
+
+void CA::nwrap_boundary()
+{
+  set_border(NORTH, get_border(SOUTH));
+  set_border(SOUTH, get_border(NORTH));
+  set_border(EAST, get_border(WEST));
+  set_border(WEST, get_border(EAST));
+
+  set_corner(NW, get_corner(SE));
+  set_corner(SE, get_corner(NW));
+  set_corner(NE, get_corner(SW));
+  set_corner(SW, get_corner(NE));
 }
 
 void CA::wrap_boundary()

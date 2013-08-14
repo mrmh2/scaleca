@@ -34,6 +34,45 @@ TEST(CaBaseTest, CaWrapBoundary) {
 
 }
 
+TEST(CaBaseTest, CaNWrapBoundary) {
+  CA ca(5, 5);
+  ca.set_cell(0, 0, 1);
+  ca.set_cell(0, 2, 2);
+  ca.set_cell(0, 4, 3);
+  ca.set_cell(2, 0, 4);
+  ca.set_cell(2, 4, 5);
+  ca.set_cell(4, 0, 6);
+  ca.set_cell(4, 2, 7);
+  ca.set_cell(4, 4, 8);
+
+
+  /* 0|00000|0
+     -+-----+-
+     0|10203|0
+     0|00000|0
+     0|40005|0
+     0|00000|0
+     0|60708|0
+     -+-----+-
+     0|00000|0 */
+
+  ca.nwrap_boundary();
+
+  // Corners
+  EXPECT_EQ(8, ca.get_cell(-1, -1));
+  EXPECT_EQ(6, ca.get_cell(-1, 5));
+  EXPECT_EQ(3, ca.get_cell(5, -1));
+  EXPECT_EQ(1, ca.get_cell(5, 5));
+
+  // Mid points of edges
+  EXPECT_EQ(7, ca.get_cell(-1, 2));
+  EXPECT_EQ(5, ca.get_cell(2, -1));
+  EXPECT_EQ(4, ca.get_cell(2, 5));
+  EXPECT_EQ(2, ca.get_cell(5, 2));
+
+}
+
+
 TEST(CaBaseTest, CaLargeRead) {
   CA ca("../vote-6122843.cas");
   EXPECT_EQ(6122843, ca.sum_state());

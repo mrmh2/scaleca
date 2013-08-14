@@ -29,7 +29,9 @@ public:
   int get_cell(int row, int col);
   void dump();
   void fill_random();
+
   void wrap_boundary();
+  void nwrap_boundary();
 
   void save_state(string filename);
   void read_state(string filename);
