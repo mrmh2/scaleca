@@ -55,6 +55,7 @@ public:
  CALife(int in_nrows, int in_ncols) : CA(in_nrows, in_ncols) {}
   CALife(string filename) : CA(filename) {}
   void update();
+  void raw_update();
   //  CALife(int, int);
 };
 

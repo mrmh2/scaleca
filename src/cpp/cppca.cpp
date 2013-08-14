@@ -7,9 +7,13 @@ void supdate(int *sd, int *ns, int nrows, int ncols);
 
 void CALife::update()
 {
-  int h8[8][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
-
   nwrap_boundary();
+  raw_update();
+}
+
+void CALife::raw_update()
+{
+  int h8[8][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
 
   for(int r=0; r<nrows; r++)
     for(int c=0; c<ncols; c++) {
