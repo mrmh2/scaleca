@@ -32,6 +32,7 @@ int test_glider()
   for (int i=0; i<150; i++) {
     ca.update();
     ca.dump();
+    cout << ca.sum_state() << endl;
   }
 }
 
@@ -134,8 +135,9 @@ void test_copy()
 
 int main(int argc, char *argv[])
 {
-  test_copy();
-  // test_glider();
+
+  //  test_copy();
+  test_glider();
   //test_vote();
     //  test_dump();
 
