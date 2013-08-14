@@ -1,6 +1,6 @@
-CPP=clang++
-CFLAGS=-I /Users/hartleym/local/include
-LIBS=-lgtest
+CPP=g++
+CFLAGS=-I $(HOME)/local/include -L $(HOME)/local/lib
+LIBS=-lgtest -lpthread
 
 gtca: gt.cpp ../cppca.cpp ../cppca.h
-	$(CPP) $(CFLAGS) $(LIBS) -L . gt.cpp ../cppca.cpp -O3 -o gtca
+	$(CPP) gt.cpp ../cppca.cpp -L . $(CFLAGS) $(LIBS) -o gtca

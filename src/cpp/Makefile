@@ -1,5 +1,5 @@
-CFLAGS=-O4
-CPP=clang++
+CFLAGS=-Ofast
+CPP=g++
 
 all: cppca cppserver time_ca
 
@@ -11,3 +11,6 @@ cppca: cppca.cpp test_ca.cpp cppca.h
 
 cppserver: cppserver.cpp
 	g++ $(CFLAGS) cppserver.cpp -lzmq -o cppserver
+
+clean:
+	rm -f cppserver cppca time_ca
