@@ -1,4 +1,4 @@
-CFLAGS=-Ofast
+CFLAGS=-Ofast -fopenmp
 CPP=g++
 
 all: cppca cppserver time_ca

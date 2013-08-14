@@ -1,5 +1,5 @@
 CPP=g++
-CFLAGS=-I $(HOME)/local/include -L $(HOME)/local/lib
+CFLAGS=-I $(HOME)/local/include -L $(HOME)/local/lib -fopenmp
 LIBS=-lgtest -lpthread
 
 gtca: gt.cpp ../cppca.cpp ../cppca.h

@@ -1,4 +1,4 @@
-#include"cppca.h"
+xp#include"cppca.h"
 
 using namespace std;
 
@@ -27,31 +27,11 @@ void CALife::update()
 
 void CAVote::update()
 {
-  int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
-  int ur[10] = {0, 0, 0, 0, 1, 0, 1, 1, 1, 1};
-
-  int ro, co;
-
   wrap_boundary();
-
-  // for(int r=0; r<nrows; r++)
-  //   for(int c=0; c<ncols; c++) {
-  //     int nsum = 0;
-  //     for (int i=0; i<9; i++) {
-  // 	ro = h9[i][0];
-  // 	co = h9[i][1];
-  // 	nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
-  //     }
-  //     //      if (nsum == 4 || nsum > 5) next_state[(1 + c) + (1 + r) * real_ncols] = 1;
-  //     //      else next_state[(1 + c) + (1 + r) * real_ncols] = 0;
-  //     next_state[(1 + c) + (1 + r) * real_ncols] = ur[nsum];
-      
-  //   }
 
   supdate(&state_data.front(), &next_state.front(), nrows, ncols);
 
   swap(next_state, state_data);
-
 }
 
 void supdate(int *sd, int *ns, int nrows, int ncols)
@@ -63,12 +43,13 @@ void supdate(int *sd, int *ns, int nrows, int ncols)
   int *state_data = sd;
   int *next_state = ns;
 
-  int ro, co;
+  int ro, co, r, c, nsum, i;
 
-  for(int r=0; r<nrows; r++)
-    for(int c=0; c<ncols; c++) {
-      int nsum = 0;
-      for (int i=0; i<9; i++) {
+#pragma omp parallel for private(c, nsum, ro, co, i) schedule(guided, 10)
+  for(r=0; r<nrows; r++)
+    for(c=0; c<ncols; c++) {
+      nsum = 0;
+      for (i=0; i<9; i++) {
         ro = h9[i][0];
         co = h9[i][1];
         nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];

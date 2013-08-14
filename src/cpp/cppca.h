@@ -7,6 +7,8 @@
 #include<algorithm>
 #include<numeric>
 
+#include<omp.h>
+
 #ifndef _cppca_h
 #define _cppca_h
 
