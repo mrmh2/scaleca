@@ -38,9 +38,15 @@ int test_glider()
 
 void test_wrap()
 {
-  CALife ca(15, 15);
-  srand(time(0));
-  ca.fill_random();
+  CA ca(5, 5);
+  ca.set_cell(0, 0, 1);
+  ca.set_cell(0, 2, 2);
+  ca.set_cell(0, 4, 3);
+  ca.set_cell(2, 0, 4);
+  ca.set_cell(2, 4, 5);
+  ca.set_cell(4, 0, 6);
+  ca.set_cell(4, 2, 7);
+  ca.set_cell(4, 4, 8);
   ca.dump();
   ca.wrap_boundary();
   ca.dump();
@@ -53,7 +59,6 @@ void test_vote()
   srand(time(0));
   ca.fill_random();
   //  ca.dump();
-
   for (int i=0;i<10;i++) {
     ca.update();
     //    static_update(ca);
@@ -135,9 +140,9 @@ void test_copy()
 
 int main(int argc, char *argv[])
 {
+  test_wrap();
 
   //  test_copy();
-  test_glider();
   //test_vote();
     //  test_dump();
 

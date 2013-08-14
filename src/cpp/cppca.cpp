@@ -60,7 +60,7 @@ next_state((in_nrows + 2) * (in_ncols + 2))
   real_nrows = in_nrows + 2;
   real_ncols = in_ncols + 2;
   
-  cout << "Constructing " << nrows << "x" << ncols << endl;
+  //  cout << "Constructing " << nrows << "x" << ncols << endl;
 }
 
 CA::CA(string filename)
@@ -98,7 +98,12 @@ CA::CA(const CA &orig)
 
 int CA::sum_state()
 {
-  return accumulate(state_data.begin(), state_data.end(), 0);
+  int sum = 0;
+  for(int r=0; r<nrows; r++)
+    for(int c=0; c<ncols; c++)
+      sum += get_cell(r, c);
+  //  return accumulate(state_data.begin(), state_data.end(), 0);
+  return sum;
 }
 
 void CA::set_cell(int row, int col, int value)
