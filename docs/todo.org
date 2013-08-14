@@ -18,3 +18,7 @@
 * Tests
 ** ca_server
 *** TODO Test edge/boundary cases
+
+* cppca
+** TODO Proper build system
+** TODO Get rid of using namespace std;

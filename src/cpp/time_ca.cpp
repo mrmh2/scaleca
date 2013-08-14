@@ -19,15 +19,16 @@ double read_timer( )
 
 void test_timing()
 {
-  CAVote ca(1000, 1000);
+  CAVote ca(2000, 2000);
   ca.fill_random();
 
   int gen_count = 0;
+  int count_freq = 20;
   double start = read_timer();
   while (1) {
     ca.update();
     gen_count++;
-    if (gen_count%50 == 0) {
+    if (gen_count%count_freq == 0) {
       double gen_time = (read_timer() - start) / (double) gen_count;
       cout << gen_time << "ms per generation." << endl;
     }
