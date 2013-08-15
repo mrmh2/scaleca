@@ -9,7 +9,9 @@
 
 #include<assert.h>
 
+#ifdef INCLUDE_OMP
 #include<omp.h>
+#endif
 
 #ifndef _cppca_h
 #define _cppca_h
