@@ -39,6 +39,13 @@ void CAVote::update()
   swap(next_state, state_data);
 }
 
+void CAVote::raw_update()
+{
+  supdate(&state_data.front(), &next_state.front(), nrows, ncols);
+
+  swap(next_state, state_data);
+}  
+
 void supdate(int *sd, int *ns, int nrows, int ncols)
 {
   int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
@@ -372,4 +379,11 @@ void CA::set_corner(corner co, int new_val)
       set_cell(nrows, ncols, new_val);
       break;
     }
+}
+
+vector<int> CA::copy_state()
+{
+  vector<int> state_copy = state_data;
+
+  return state_copy;
 }

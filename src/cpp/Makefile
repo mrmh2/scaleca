@@ -2,7 +2,10 @@ CFLAGS=-Ofast -fopenmp
 CPP=g++
 CXX=g++
 
-all: cppca cppserver time_ca make_states
+all: cppca cppserver time_ca make_states parca
+
+parca: cppca.cpp parca.cpp cppca.h
+	$(CXX) $(CFLAGS) cppca.cpp parca.cpp -o parca
 
 make_states: cppca.cpp make_states.cpp cppca.h
 	$(CXX) $(CFLAGS) cppca.cpp make_states.cpp -o make_states
