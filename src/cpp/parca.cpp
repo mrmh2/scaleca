@@ -87,12 +87,123 @@ void dump_vector(vector<int> v)
   cout << endl;
 }
 
+void fourtile()
+{
+  int nrows = 20, ncols = 20;
+  CAVote camaster(nrows, ncols);
+  srand(0);
+  camaster.fill_random();
+
+  camaster.dump();
+
+  cout << "Magic number: " << camaster.sum_state() << endl;
+
+  int nthreads = 4;
+
+  omp_set_num_threads(nthreads);
+  int snrows = nrows / 2;
+  int sncols = ncols / 2;
+
+  vector<int> border_share_n(sncols * nthreads);
+  vector<int> border_share_s(sncols * nthreads);
+  vector<int> border_share_w(snrows * nthreads);
+  vector<int> border_share_e(snrows * nthreads);
+  vector<int> corner_share_nw(nthreads);
+  vector<int> corner_share_ne(nthreads);
+  vector<int> corner_share_se(nthreads);
+  vector<int> corner_share_sw(nthreads);
+
+#pragma omp parallel shared(camaster, snrows, sncols)
+  {
+    int tid = omp_get_thread_num();
+    int rtiles = 2;
+    int ctiles = 2;
+    int tr = tid / 2;
+    int tc = tid % 2;
+    CAVote cashard(snrows, sncols);
+
+    // Populate our shard with data from the master
+    for(int r = 0; r < snrows; r++) 
+      for(int c = 0; c < sncols; c++) {
+	cashard.set_cell(r, c, 
+			 camaster.get_cell(r + tr * snrows, c + tc * sncols));
+      }
+
+#pragma omp critical
+    {
+      cout << "(" << tr << "," << tc << ")" << endl;
+      //      cashard.dump();
+      cout << cashard.sum_state() << endl;
+    }
+
+    for(int g = 0; g < 1; g++) {
+      /* Fetch our borders */
+      vector<int> nb = cashard.get_border(NORTH);
+      vector<int> sb = cashard.get_border(SOUTH);
+      vector<int> wb = cashard.get_border(WEST);
+      vector<int> eb = cashard.get_border(EAST);
+
+      for(int c = 0; c < sncols; c++) {
+	border_share_n[c + tid * sncols] = nb[c];
+	border_share_s[c + tid * sncols] = sb[c];
+      }
+
+      for(int r = 0; r < snrows; r++) {
+	border_share_w[r + tid * snrows] = wb[r];
+	border_share_e[r + tid * snrows] = eb[r];
+      }
+
+      corner_share_nw[tid] = cashard.get_corner(NW);
+      corner_share_ne[tid] = cashard.get_corner(NE);
+      corner_share_se[tid] = cashard.get_corner(SE);
+      corner_share_sw[tid] = cashard.get_corner(SW);
+
+      /* Make sure all threads have written border data before we start reading! */
+#pragma omp barrier
+      int my_ns = (tid + ctiles) % nthreads;
+      int my_ew = tr * ctiles + (tc + 1) % ctiles;
+
+      for(int c = 0; c < sncols; c++) {
+	nb[c] = border_share_s[c + my_ns * sncols];
+	sb[c] = border_share_n[c + my_ns * sncols];
+      }
+
+      for(int r = 0; r < snrows; r++) {
+	wb[r] = border_share_e[r + my_ew * snrows];
+	eb[r] = border_share_w[r + my_ew * sncols];
+      }
+      
+      cashard.set_border(NORTH, nb);
+      cashard.set_border(SOUTH, sb);
+      cashard.set_border(WEST, wb);
+      cashard.set_border(EAST, eb);
+
+#pragma omp critical
+      {
+	cout << "(" << tr << "," << tc << ")" << endl;
+	cashard.dump();
+      }
+
+    } /* generation loop */
+
+  } /* omp parallel */
+
+
+  // dump_vector(border_share_n);
+  // dump_vector(border_share_s);
+  // dump_vector(border_share_w);
+  // dump_vector(border_share_e);
+
+}
+
 void split_ca_omp()
 {
   int nrows = 4000, ncols = 4000;
   CAVote camaster(nrows, ncols);
   srand(0);
   camaster.fill_random();
+
+  omp_set_num_threads(2);
 
   //  camaster.dump();
 
@@ -223,8 +334,9 @@ void split_ca_omp()
 
 int main(int argc, char *argv[])
 {
-  split_ca_omp();
+  //split_ca_omp();
   //  time_cavote(4000, 4000);
+  fourtile();
 
   return 0;
 }

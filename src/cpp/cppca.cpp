@@ -145,30 +145,35 @@ void CA::dump()
 {
   // Dump CA state to terminal, including border regions
 
+  // Upper numbering row
+  cout << "    ";
+  for(int c=0; c < ncols; c++) cout << c%10;
+  cout << endl;
+    
   // Top row of ghost region
-  cout << get_cell(-1, -1) << "|";
+  cout << "  " << get_cell(-1, -1) << "|";
   for(int c=0; c<ncols; c++) cout << get_cell(-1, c);
   cout << "|" << get_cell(-1, ncols) << endl;
 
   // Separator (purely visual)
-  cout << "-+";
+  cout << "  -+";
   for(int c=0; c<ncols; c++) cout << "-";
   cout << "+-" << endl;
 
   // Main part of CA state
   for(int r=0; r<nrows; r++) {
-    cout << get_cell(r, -1) << "|";		
+    cout << r%10 << " " << get_cell(r, -1) << "|";		
     for(int c=0; c<ncols; c++) cout << get_cell(r, c);
     cout << "|" << get_cell(r, ncols) << endl;
   }
 
   // Lower separator (visual again)
-  cout << "-+";
+  cout << "  -+";
   for(int c=0; c<ncols; c++) cout << "-";
   cout << "+-" << endl;
 
   // Bottom row of ghost region
-  cout << get_cell(nrows, -1) << "|";
+  cout << "  " << get_cell(nrows, -1) << "|";
   for (int c=0; c<ncols; c++) cout << get_cell(nrows, c);
   cout << "|" << get_cell(nrows, ncols);
 
