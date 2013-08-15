@@ -102,6 +102,8 @@ void split_ca_omp()
   vector<int> master_data = camaster.copy_state();
   vector<int> border_exchange1(2 * csplit, 0);
   vector<int> border_exchange2(2 * csplit, 0);
+  vector<int> border_exchange3(2 * rsplit, 0);
+  vector<int> border_exchange4(2 * rsplit, 0);
 
 #pragma omp parallel shared(master_data, rsplit, csplit)
   {
@@ -118,34 +120,52 @@ void split_ca_omp()
     // int gen_count = 0;
     // int count_freq = 10;
     // double start = read_timer();
-  while(1) {
-    //    for(int g = 0; g < 1; g++) {
+    //  while(1) {
+    for(int g = 0; g < 1; g++) {
       vector<int> nb = cashard.get_border(NORTH);
       vector<int> sb = cashard.get_border(SOUTH);
+      vector<int> wb = cashard.get_border(WEST);
+      vector<int> eb = cashard.get_border(EAST);
+      // Populate north/south border exchange vectors
       for(int i=0;i<ncols;i++) {
 	border_exchange1[i + tid * ncols] = nb[i];
 	border_exchange2[i + tid * ncols] = sb[i];
       }
-#pragma omp barrier
+      // Populate east/west border exchange vectors
+      for(int i = 0; i < rsplit; i++) {
+	border_exchange3[i + tid * rsplit] = wb[i];
+	border_exchange4[i + tid * rsplit] = eb[i];
+      }
+#pragma omp barrier /* Make sure we've filled our exchange vectors */
+      /* Read our new north/south borders */
       for(int i = 0; i < ncols; i++) {
 	sb[i] = border_exchange1[i + (1 - tid) * ncols];
 	nb[i] = border_exchange2[i + (1 - tid) * ncols];
       }
+      
+      /* Read our new east/west borders */
+      for(int i = 0; i < rsplit; i++) {
+	eb[i] = border_exchange3[i + (1 - tid) * rsplit];
+	wb[i] = border_exchange4[i + (1 - tid) * rsplit];
+      }
+
       //if (tid == 1 ) dump_vector(sb);
       cashard.set_border(SOUTH, sb);
       cashard.set_border(NORTH, nb);
+      cashard.set_border(EAST, eb);
+      cashard.set_border(WEST, wb);
       //    if (tid == 1 ) cashard.dump();
 
       cashard.raw_update();
 
-      if (tid == 0) {
-	gen_count++;
-	if (gen_count%count_freq == 0) {
-	  double gen_time = (read_timer() - start) / (double) gen_count;
-	  cout << gen_time << "ms per generation." << endl;
-    }
-      }
-      //      printf("%d: I have %d\n", tid, cashard.sum_state());
+      // if (tid == 0) {
+      // 	gen_count++;
+      // 	if (gen_count%count_freq == 0) {
+      // 	  double gen_time = (read_timer() - start) / (double) gen_count;
+      // 	  cout << gen_time << "ms per generation." << endl;
+      // 	}
+      // } /* timing block */
+      printf("%d: I have %d\n", tid, cashard.sum_state());
     }
 
   }
@@ -164,14 +184,14 @@ void split_ca_omp()
 
   report(&camaster, &caup, &cadown);
 
-  int gen_count = 0;
-  int count_freq = 10;
-  double start = read_timer();
+  // int gen_count = 0;
+  // int count_freq = 10;
+  // double start = read_timer();
 
 
-  while (1) {
-    //  for(int g = 0; g < 2; g++) {
-    //    camaster.raw_update();
+  //  while (1) {
+  for(int g = 0; g < 1; g++) {
+    camaster.raw_update();
 
     cadown.set_border(NORTH, caup.get_border(SOUTH));
     caup.set_border(SOUTH, cadown.get_border(NORTH));
@@ -179,17 +199,23 @@ void split_ca_omp()
     cadown.set_border(SOUTH, caup.get_border(NORTH));
     caup.set_border(NORTH, cadown.get_border(SOUTH));
 
+    cadown.set_border(WEST, caup.get_border(EAST));
+    caup.set_border(EAST, cadown.get_border(WEST));
+
+    cadown.set_border(EAST, caup.get_border(WEST));
+    caup.set_border(WEST, cadown.get_border(EAST));
+
     //    cadown.dump();
 
     caup.raw_update();
     cadown.raw_update();
-    //    report(&camaster, &caup, &cadown);
+    report(&camaster, &caup, &cadown);
 
-    gen_count++;
-    if (gen_count%count_freq == 0) {
-      double gen_time = (read_timer() - start) / (double) gen_count;
-      cout << gen_time << "ms per generation." << endl;
-    }
+    // gen_count++;
+    // if (gen_count%count_freq == 0) {
+    //   double gen_time = (read_timer() - start) / (double) gen_count;
+    //   cout << gen_time << "ms per generation." << endl;
+    // }
 
   }
 
