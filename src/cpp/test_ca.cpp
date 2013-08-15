@@ -143,13 +143,6 @@ void test_copy()
   cacopy.dump();
 }
 
-void create_large_vote()
-{
-  CAVote ca(3500, 3500);
-  ca.fill_random();
-  ca.save_state("vote-3k5-3k5.cas");
-  cout << "Created with sum " << ca.sum_state() << endl;
-}
 
 void dump_vector(vector<int> v)
 {
@@ -192,20 +185,6 @@ void test_get_corner()
   ca.dump();
 }
 
-void create_test_ca()
-{
-  CA ca(5, 5);
-  ca.set_cell(0, 0, 1);
-  ca.set_cell(0, 2, 2);
-  ca.set_cell(0, 4, 3);
-  ca.set_cell(2, 0, 4);
-  ca.set_cell(2, 4, 5);
-  ca.set_cell(4, 0, 6);
-  ca.set_cell(4, 2, 7);
-  ca.set_cell(4, 4, 8);
-
-  ca.save_state("edge-test.cas");
-}
 
 void test_split()
 {
