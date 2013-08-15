@@ -28,13 +28,12 @@ void time_cavote(int nrows, int ncols)
   int count_freq = 10;
   double start = read_timer();
 
-  int tid = omp_get_thread_num();
   while (1) {
     cawhole.update();
     gen_count++;
     if (gen_count%count_freq == 0) {
       double gen_time = (read_timer() - start) / (double) gen_count;
-      cout << tid << ": " << gen_time << "ms per generation." << endl;
+      cout << gen_time << "ms per generation." << endl;
     }
   }
 }
@@ -82,10 +81,124 @@ void split_ca_check()
 
 }
 
+void dump_vector(vector<int> v)
+{
+  copy(v.begin(), v.end(), ostream_iterator<int>(cout, ""));
+  cout << endl;
+}
+
+void split_ca_omp()
+{
+  int nrows = 4000, ncols = 4000;
+  CAVote camaster(nrows, ncols);
+  srand(0);
+  camaster.fill_random();
+
+  //  camaster.dump();
+
+  int rsplit = nrows / 2;
+  int csplit = ncols;
+
+  vector<int> master_data = camaster.copy_state();
+  vector<int> border_exchange1(2 * csplit, 0);
+  vector<int> border_exchange2(2 * csplit, 0);
+
+#pragma omp parallel shared(master_data, rsplit, csplit)
+  {
+    int tid = omp_get_thread_num();
+    CAVote cashard(rsplit, csplit);
+
+    for(int r = 0; r < rsplit; r++) 
+      for(int c = 0; c < csplit; c++) {
+	cashard.set_cell(r, c, camaster.get_cell(r + tid * rsplit, c));
+      }
+
+    printf("%d: I have %d\n", tid, cashard.sum_state());
+
+    // int gen_count = 0;
+    // int count_freq = 10;
+    // double start = read_timer();
+  while(1) {
+    //    for(int g = 0; g < 1; g++) {
+      vector<int> nb = cashard.get_border(NORTH);
+      vector<int> sb = cashard.get_border(SOUTH);
+      for(int i=0;i<ncols;i++) {
+	border_exchange1[i + tid * ncols] = nb[i];
+	border_exchange2[i + tid * ncols] = sb[i];
+      }
+#pragma omp barrier
+      for(int i = 0; i < ncols; i++) {
+	sb[i] = border_exchange1[i + (1 - tid) * ncols];
+	nb[i] = border_exchange2[i + (1 - tid) * ncols];
+      }
+      //if (tid == 1 ) dump_vector(sb);
+      cashard.set_border(SOUTH, sb);
+      cashard.set_border(NORTH, nb);
+      //    if (tid == 1 ) cashard.dump();
+
+      cashard.raw_update();
+
+      if (tid == 0) {
+	gen_count++;
+	if (gen_count%count_freq == 0) {
+	  double gen_time = (read_timer() - start) / (double) gen_count;
+	  cout << gen_time << "ms per generation." << endl;
+    }
+      }
+      //      printf("%d: I have %d\n", tid, cashard.sum_state());
+    }
+
+  }
+
+  //  dump_vector(border_exchange1);
+  //  dump_vector(border_exchange2);
+
+  CAVote caup(rsplit, csplit);
+  CAVote cadown(rsplit, csplit);
+
+  for(int r = 0; r < rsplit; r++) 
+    for(int c = 0; c < csplit; c++) {
+      caup.set_cell(r, c, camaster.get_cell(r, c));
+      cadown.set_cell(r, c, camaster.get_cell(r + rsplit, c));
+    }
+
+  report(&camaster, &caup, &cadown);
+
+  int gen_count = 0;
+  int count_freq = 10;
+  double start = read_timer();
+
+
+  while (1) {
+    //  for(int g = 0; g < 2; g++) {
+    //    camaster.raw_update();
+
+    cadown.set_border(NORTH, caup.get_border(SOUTH));
+    caup.set_border(SOUTH, cadown.get_border(NORTH));
+
+    cadown.set_border(SOUTH, caup.get_border(NORTH));
+    caup.set_border(NORTH, cadown.get_border(SOUTH));
+
+    //    cadown.dump();
+
+    caup.raw_update();
+    cadown.raw_update();
+    //    report(&camaster, &caup, &cadown);
+
+    gen_count++;
+    if (gen_count%count_freq == 0) {
+      double gen_time = (read_timer() - start) / (double) gen_count;
+      cout << gen_time << "ms per generation." << endl;
+    }
+
+  }
+
+}
+
 int main(int argc, char *argv[])
 {
-  split_ca_check();
-  // time_cavote(4000, 2000);
+  split_ca_omp();
+  //  time_cavote(4000, 4000);
 
   return 0;
 }
