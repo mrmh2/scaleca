@@ -1,12 +1,12 @@
-CFLAGS=-Ofast -fopenmp
+CFLAGS=-O3 -fopenmp
 CPP=g++
 CXX=g++
 MPICXX=mpic++
 
-all: cppca cppserver time_ca griddev make_states parca mpica
+all: cppca cppserver time_ca griddev make_states mpica parca
 
 mpica: cppca.cpp gridmanager.cpp cppca.h gridmanager.h mpica.cc
-	$(MPICXX) -Ofast cppca.cpp gridmanager.cpp mpica.cc -o mpica
+	$(MPICXX) -O3 cppca.cpp gridmanager.cpp mpica.cc -o mpica
 
 parca: cppca.cpp parca.cpp gridmanager.cpp cppca.h
 	$(CXX) $(CFLAGS) cppca.cpp parca.cpp gridmanager.cpp -o parca

@@ -91,7 +91,7 @@ void mpi_ca(int nrows, int ncols, int sid, int nshards)
     MPI_Irecv(&new_border_n.front(), sncols, MPI_INT, my_n, 1, MPI_COMM_WORLD, &req[8]);
     MPI_Irecv(&new_border_s.front(), sncols, MPI_INT, my_s, 0, MPI_COMM_WORLD, &req[9]);
     MPI_Irecv(&new_border_w.front(), snrows, MPI_INT, my_w, 3, MPI_COMM_WORLD, &req[10]);
-    MPI_Irecv(&new_border_e.front(), snrows, MPI_INT, my_w, 2, MPI_COMM_WORLD, &req[11]);
+    MPI_Irecv(&new_border_e.front(), snrows, MPI_INT, my_e, 2, MPI_COMM_WORLD, &req[11]);
 
     MPI_Isend(&corner_nw, 1, MPI_INT, my_nw, 4, MPI_COMM_WORLD, &req[4]);
     MPI_Isend(&corner_ne, 1, MPI_INT, my_ne, 5, MPI_COMM_WORLD, &req[5]);
@@ -102,7 +102,11 @@ void mpi_ca(int nrows, int ncols, int sid, int nshards)
     MPI_Irecv(&new_corner_se, 1, MPI_INT, my_se, 4, MPI_COMM_WORLD, &req[14]);
     MPI_Irecv(&new_corner_sw, 1, MPI_INT, my_sw, 5, MPI_COMM_WORLD, &req[15]);
 
+    if (sid == 0) printf("Waiting at barrier.\n");
+
     MPI_Waitall(16, req, stats);
+
+    if (sid == 0) printf("Passed barrier\n");
 
     cashard.set_border(NORTH, new_border_n);
     cashard.set_border(SOUTH, new_border_s);
@@ -145,7 +149,7 @@ int main(int argc, char *argv[])
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-  mpi_ca(4000, 6000, rank, size);
+  mpi_ca(3000, 3000, rank, size);
 
   // printf("Rank %d of %d\n", rank, size);
 

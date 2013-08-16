@@ -113,7 +113,7 @@ void dump_info(CA *cashard, int tr, int tc)
 
 void fourtile()
 {
-  int nrows = 4000, ncols = 6000;
+  int nrows = 6000, ncols = 6000;
   CAVote camaster(nrows, ncols);
   srand(0);
   camaster.fill_random();
@@ -123,8 +123,10 @@ void fourtile()
 
   //  cout << "Magic number: " << camaster.sum_state() << endl;
 
-  int nthreads = 6;
+  int nthreads = 9;
   omp_set_num_threads(nthreads);
+
+  printf("Initialised at %dx%d, using %d threads\n", nrows, ncols, nthreads);
 
   GridManager gm(nrows, ncols, nthreads);
   int snrows = gm.TileDimensions().r;
@@ -163,7 +165,7 @@ void fourtile()
     int count_freq = 10;
     double start = read_timer();
 
-    for(int g = 0; g < 10; g++) {
+    for(int g = 0; g < 3; g++) {
       /* Fetch our borders */
       vector<int> nb = cashard.get_border(NORTH);
       vector<int> sb = cashard.get_border(SOUTH);
@@ -225,7 +227,7 @@ void fourtile()
       cashard.set_corner(SE, se);
       cashard.set_corner(SW, sw);
 
-      //dump_info(&cashard, tr, tc);
+      //      dump_info(&cashard, tr, tc);
       //      if (tid == 0) dump_vector(border_share_w);
 
             cashard.raw_update();

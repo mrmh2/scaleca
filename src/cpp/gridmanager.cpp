@@ -11,6 +11,10 @@ GridManager::GridManager(int nrows, int ncols, int nshards) :
     grid_rows = 2;
     grid_cols = 1;
     break;
+  case 3:
+    grid_rows = 1;
+    grid_cols = 3;
+    break;
   case 4:
     grid_rows = 2;
     grid_cols = 2;
@@ -22,6 +26,10 @@ GridManager::GridManager(int nrows, int ncols, int nshards) :
   case 9:
     grid_rows = 3;
     grid_cols = 3;
+    break;
+  case 16:
+    grid_rows = 4;
+    grid_cols = 4;
     break;
   }
 }

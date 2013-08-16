@@ -38,5 +38,5 @@ void test_timing()
 
 int main()
 {
-  test_timing();
+  //test_timing();
 }
