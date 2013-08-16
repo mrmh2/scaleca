@@ -20,9 +20,22 @@ void test_construct()
   
 }
 
+void test_neigh()
+{
+  int nthreads = 9;
+
+  GridManager gm(6000, 6000, nthreads);
+
+  for(int i = 0; i < nthreads; i++) {
+    cout << gm.NeighbourSID(WEST, i) << endl;
+  }
+
+}
+
 int main(int argc, char *argv[])
 {
-  test_construct();
+  test_neigh();
+  //  test_construct();
 
   return 0;
 }

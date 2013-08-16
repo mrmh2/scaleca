@@ -14,6 +14,11 @@ GridManager::GridManager(int nrows, int ncols, int nshards) :
   case 6:
     grid_rows = 2;
     grid_cols = 3;
+    break;
+  case 9:
+    grid_rows = 3;
+    grid_cols = 3;
+    break;
   }
 }
 
@@ -51,8 +56,35 @@ int GridManager::TileSID(GridRef tile_position)
   return c + r * grid_cols;
 }
 
+int GridManager::NeighbourSID(grid_neighbour neigh, int sid)
+{
+  int no[8][2] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, 1}, {1, -1} };
+
+  int row_offset = no[neigh][0];
+  int col_offset = no[neigh][1];
+
+  GridRef tile_pos = TilePosition(sid);
+
+  // We add grid_rows or grid_cols to make modulo arithmetic work with negative
+  // offsets.
+  int neigh_r = (grid_rows + tile_pos.r + row_offset) % grid_rows;
+  int neigh_c = (grid_cols + tile_pos.c + col_offset) % grid_cols;
+
+  //  cout << "nr: " << neigh_r << "nc: " << neigh_c << endl;
+  
+  return TileSID(GridRef(neigh_r, neigh_c));
+}
+
 ostream& operator<<(ostream& os, const GridRef& gr)
 {
   os << "(" << gr.r << "," << gr.c << ")";
   return os;
+}
+
+bool operator==(const GridRef &gr1, const GridRef &gr2) {
+  return (gr1.r == gr2.r && gr1.c == gr2.c);
+}
+
+GridRef operator+(const GridRef &gr1, const GridRef &gr2) {
+  return GridRef(gr1.r + gr2.r, gr1.c + gr2.c);
 }

@@ -99,12 +99,23 @@ void check_totals(vector<int> *checksum, CA *cashard, CA *camaster)
 #pragma omp barrier
 }
 
+void dump_info()
+{
+// #pragma omp critical
+//     {
+//       cout << "(" << tr << "," << tc << ")" << endl;
+//       //      cashard.dump();
+//       cout << cashard.sum_state() << endl;
+//     }
+}
+
 void fourtile()
 {
-  int nrows = 4000, ncols = 4000;
+  int nrows = 6000, ncols = 6000;
   CAVote camaster(nrows, ncols);
   srand(0);
   camaster.fill_random();
+  bool time_it = true;
 
   //  camaster.dump();
 
@@ -145,18 +156,13 @@ void fourtile()
 
     check_totals(&checksum, &cashard, &camaster);
 
-// #pragma omp critical
-//     {
-//       cout << "(" << tr << "," << tc << ")" << endl;
-//       //      cashard.dump();
-//       cout << cashard.sum_state() << endl;
-//     }
 
-    // int gen_count = 0;
-    // int count_freq = 10;
-    // double start = read_timer();
+    int gen_count = 0;
+    int count_freq = 10;
+    double start = read_timer();
 
-    for(int g = 0; g < 5; g++) {
+
+    for(int g = 0; g < 100000; g++) {
       /* Fetch our borders */
       vector<int> nb = cashard.get_border(NORTH);
       vector<int> sb = cashard.get_border(SOUTH);
@@ -209,34 +215,21 @@ void fourtile()
       cashard.set_corner(SE, se);
       cashard.set_corner(SW, sw);
 
-// #pragma omp critical
-//       {
-// 	cout << "(" << tr << "," << tc << ")" << endl;
-// 	//	cout << "mynw: " << my_nw << endl;
-// 	cashard.dump();
-
-//       }
       cashard.raw_update();
 
-      if (tid == 0) camaster.update();
-      check_totals(&checksum, &cashard, &camaster);
-      // if (tid == 0) {
-      // 	gen_count++;
-      // 	if (gen_count%count_freq == 0) {
-      // 	  double gen_time = (read_timer() - start) / (double) gen_count;
-      // 	  cout << gen_time << "ms per generation." << endl;
-      // 	}
-      // } /* timing block */
+
+      // if (tid == 0) camaster.update();
+      // check_totals(&checksum, &cashard, &camaster);
+
+      if (tid == 0) {
+      	gen_count++;
+      	if (gen_count%count_freq == 0) {
+      	  double gen_time = (read_timer() - start) / (double) gen_count;
+      	  cout << gen_time << "ms per generation." << endl;
+      	}
+      } /* timing block */
 
     } /* generation loop */
-
-// #pragma omp critical
-//     {
-//       cout << "(" << tr << "," << tc << ")" << endl;
-//       //      cashard.dump();
-//       cout << cashard.sum_state() << endl;
-//     }
-
 
   } /* omp parallel */
 
@@ -245,11 +238,6 @@ void fourtile()
   // dump_vector(border_share_s);
   // dump_vector(border_share_w);
   // dump_vector(border_share_e);
-
-  camaster.update();
-  cout << camaster.sum_state() << endl;
-  camaster.update();
-  cout << camaster.sum_state() << endl;
 
 }
 
