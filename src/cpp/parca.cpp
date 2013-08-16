@@ -178,10 +178,17 @@ void fourtile()
       cashard.set_border(WEST, wb);
       cashard.set_border(EAST, eb);
 
+      int my_nw = ctiles * ((tr + 1)%2) + ((tc + 1)%2);
+      int nw = corner_share_se[my_nw];
+
+      cashard.set_corner(NW, nw);
+
 #pragma omp critical
       {
 	cout << "(" << tr << "," << tc << ")" << endl;
+	//	cout << "mynw: " << my_nw << endl;
 	cashard.dump();
+
       }
 
     } /* generation loop */
