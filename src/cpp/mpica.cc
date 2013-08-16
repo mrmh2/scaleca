@@ -54,7 +54,7 @@ void mpi_ca(int nrows, int ncols, int sid, int nshards)
   int count_freq = 10;
   double start = read_timer();
 
-  for(int g = 0; g < 100000; g++) {
+  for(int g = 0; g < 10; g++) {
     vector<int> border_n = cashard.get_border(NORTH);
     vector<int> border_s = cashard.get_border(SOUTH);
     vector<int> border_w = cashard.get_border(WEST);
@@ -120,13 +120,19 @@ void mpi_ca(int nrows, int ncols, int sid, int nshards)
     // camaster.update();
     // if (sid == 0) printf("%d\n", camaster.sum_state());
 
-    if (sid == 0) {
-      gen_count++;
-      if (gen_count%count_freq == 0) {
-	double gen_time = (read_timer() - start) / (double) gen_count;
-	cout << gen_time << "ms per generation." << endl;
-      }
-    } /* timing block */
+    // if (sid == 0) {
+    //   gen_count++;
+    //   if (gen_count%count_freq == 0) {
+    // 	double gen_time = (read_timer() - start) / (double) gen_count;
+    // 	cout << gen_time << "ms per generation." << endl;
+    //   }
+    // } /* timing block */
+
+    int allsum;
+    int mysum = cashard.sum_state();
+    MPI_Reduce(&mysum, &allsum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+    camaster.update();
+    if (sid == 0) printf("Allsum: %d == %d\n", allsum, camaster.sum_state());
 
   } /* generation loop */
 }
