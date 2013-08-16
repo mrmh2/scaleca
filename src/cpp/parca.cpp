@@ -87,16 +87,28 @@ void dump_vector(vector<int> v)
   cout << endl;
 }
 
+void check_totals(vector<int> *checksum, CA *cashard, CA *camaster)
+{
+  int tid = omp_get_thread_num();
+  (*checksum)[tid] = cashard->sum_state();
+#pragma omp barrier
+    if (tid == 0) {
+      int tcs = accumulate(checksum->begin(), checksum->end(), 0);
+      cout << "CHECKSUM: " << tcs << " == " << camaster->sum_state() << endl;
+    }
+#pragma omp barrier
+}
+
 void fourtile()
 {
-  int nrows = 20, ncols = 20;
+  int nrows = 4000, ncols = 4000;
   CAVote camaster(nrows, ncols);
   srand(0);
   camaster.fill_random();
 
-  camaster.dump();
+  //  camaster.dump();
 
-  cout << "Magic number: " << camaster.sum_state() << endl;
+  //  cout << "Magic number: " << camaster.sum_state() << endl;
 
   int nthreads = 4;
 
@@ -112,6 +124,8 @@ void fourtile()
   vector<int> corner_share_ne(nthreads);
   vector<int> corner_share_se(nthreads);
   vector<int> corner_share_sw(nthreads);
+
+  vector<int> checksum(nthreads);
 
 #pragma omp parallel shared(camaster, snrows, sncols)
   {
@@ -129,14 +143,20 @@ void fourtile()
 			 camaster.get_cell(r + tr * snrows, c + tc * sncols));
       }
 
-#pragma omp critical
-    {
-      cout << "(" << tr << "," << tc << ")" << endl;
-      //      cashard.dump();
-      cout << cashard.sum_state() << endl;
-    }
+    check_totals(&checksum, &cashard, &camaster);
 
-    for(int g = 0; g < 1; g++) {
+// #pragma omp critical
+//     {
+//       cout << "(" << tr << "," << tc << ")" << endl;
+//       //      cashard.dump();
+//       cout << cashard.sum_state() << endl;
+//     }
+
+    // int gen_count = 0;
+    // int count_freq = 10;
+    // double start = read_timer();
+
+    for(int g = 0; g < 5; g++) {
       /* Fetch our borders */
       vector<int> nb = cashard.get_border(NORTH);
       vector<int> sb = cashard.get_border(SOUTH);
@@ -180,18 +200,43 @@ void fourtile()
 
       int my_nw = ctiles * ((tr + 1)%2) + ((tc + 1)%2);
       int nw = corner_share_se[my_nw];
+      int se = corner_share_nw[my_nw];
+      int ne = corner_share_sw[my_nw];
+      int sw = corner_share_ne[my_nw];
 
       cashard.set_corner(NW, nw);
+      cashard.set_corner(NE, ne);
+      cashard.set_corner(SE, se);
+      cashard.set_corner(SW, sw);
 
-#pragma omp critical
-      {
-	cout << "(" << tr << "," << tc << ")" << endl;
-	//	cout << "mynw: " << my_nw << endl;
-	cashard.dump();
+// #pragma omp critical
+//       {
+// 	cout << "(" << tr << "," << tc << ")" << endl;
+// 	//	cout << "mynw: " << my_nw << endl;
+// 	cashard.dump();
 
-      }
+//       }
+      cashard.raw_update();
+
+      if (tid == 0) camaster.update();
+      check_totals(&checksum, &cashard, &camaster);
+      // if (tid == 0) {
+      // 	gen_count++;
+      // 	if (gen_count%count_freq == 0) {
+      // 	  double gen_time = (read_timer() - start) / (double) gen_count;
+      // 	  cout << gen_time << "ms per generation." << endl;
+      // 	}
+      // } /* timing block */
 
     } /* generation loop */
+
+// #pragma omp critical
+//     {
+//       cout << "(" << tr << "," << tc << ")" << endl;
+//       //      cashard.dump();
+//       cout << cashard.sum_state() << endl;
+//     }
+
 
   } /* omp parallel */
 
@@ -200,6 +245,11 @@ void fourtile()
   // dump_vector(border_share_s);
   // dump_vector(border_share_w);
   // dump_vector(border_share_e);
+
+  camaster.update();
+  cout << camaster.sum_state() << endl;
+  camaster.update();
+  cout << camaster.sum_state() << endl;
 
 }
 
