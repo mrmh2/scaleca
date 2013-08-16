@@ -101,19 +101,19 @@ void check_totals(vector<int> *checksum, CA *cashard, CA *camaster)
 #pragma omp barrier
 }
 
-void dump_info()
+void dump_info(CA *cashard, int tr, int tc)
 {
-// #pragma omp critical
-//     {
-//       cout << "(" << tr << "," << tc << ")" << endl;
-//       //      cashard.dump();
-//       cout << cashard.sum_state() << endl;
-//     }
+#pragma omp critical
+    {
+      cout << "(" << tr << "," << tc << ")" << endl;
+      cashard->dump();
+      //      cout << cashard->sum_state() << endl;
+    }
 }
 
 void fourtile()
 {
-  int nrows = 6000, ncols = 6000;
+  int nrows = 4000, ncols = 6000;
   CAVote camaster(nrows, ncols);
   srand(0);
   camaster.fill_random();
@@ -123,7 +123,7 @@ void fourtile()
 
   //  cout << "Magic number: " << camaster.sum_state() << endl;
 
-  int nthreads = 4;
+  int nthreads = 6;
   omp_set_num_threads(nthreads);
 
   GridManager gm(nrows, ncols, nthreads);
@@ -163,7 +163,7 @@ void fourtile()
     int count_freq = 10;
     double start = read_timer();
 
-    for(int g = 0; g < 10000; g++) {
+    for(int g = 0; g < 10; g++) {
       /* Fetch our borders */
       vector<int> nb = cashard.get_border(NORTH);
       vector<int> sb = cashard.get_border(SOUTH);
@@ -193,16 +193,15 @@ void fourtile()
       int my_e = gm.NeighbourSID(gm::EAST, tid);
       int my_w = gm.NeighbourSID(gm::WEST, tid);
 
-      int my_ew = tr * ctiles + (tc + 1) % ctiles;
-
       for(int c = 0; c < sncols; c++) {
 	nb[c] = border_share_s[c + my_n * sncols];
 	sb[c] = border_share_n[c + my_s * sncols];
       }
 
+      /* Grab new borders */
       for(int r = 0; r < snrows; r++) {
-	wb[r] = border_share_e[r + my_e * snrows];
-	eb[r] = border_share_w[r + my_w * sncols];
+	wb[r] = border_share_e[r + my_w * snrows];
+	eb[r] = border_share_w[r + my_e * snrows];
       }
       
       cashard.set_border(NORTH, nb);
@@ -226,18 +225,21 @@ void fourtile()
       cashard.set_corner(SE, se);
       cashard.set_corner(SW, sw);
 
-      cashard.raw_update();
+      //dump_info(&cashard, tr, tc);
+      //      if (tid == 0) dump_vector(border_share_w);
 
-      // if (tid == 0) camaster.update();
-      // check_totals(&checksum, &cashard, &camaster);
+            cashard.raw_update();
 
-      if (tid == 0) {
-      	gen_count++;
-      	if (gen_count%count_freq == 0) {
-      	  double gen_time = (read_timer() - start) / (double) gen_count;
-      	  cout << gen_time << "ms per generation." << endl;
-      	}
-      } /* timing block */
+      if (tid == 0) camaster.update();
+      check_totals(&checksum, &cashard, &camaster);
+
+      // if (tid == 0) {
+      // 	gen_count++;
+      // 	if (gen_count%count_freq == 0) {
+      // 	  double gen_time = (read_timer() - start) / (double) gen_count;
+      // 	  cout << gen_time << "ms per generation." << endl;
+      // 	}
+      // } /* timing block */
 
     } /* generation loop */
 
