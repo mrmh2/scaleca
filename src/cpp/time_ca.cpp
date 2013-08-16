@@ -20,7 +20,7 @@ double read_timer( )
 void test_timing()
 {
   //  CAVote ca(3500, 3500);
-  CAVote ca(10000, 10000);
+  CAVote ca(6000, 6000);
   ca.fill_random();
 
   int gen_count = 0;

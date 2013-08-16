@@ -1,16 +1,18 @@
 CFLAGS=-Ofast -fopenmp
 CPP=g++
 CXX=g++
+MPICXX=mpic++
 
-all: cppca cppserver time_ca make_states parca
+all: cppca cppserver time_ca griddev make_states parca mpica
 
-parca: cppca.cpp parca.cpp cppca.h
-	$(CXX) $(CFLAGS) cppca.cpp parca.cpp -o parca
+mpica: cppca.cpp gridmanager.cpp cppca.h gridmanager.h mpica.cc
+	$(MPICXX) -Ofast cppca.cpp gridmanager.cpp mpica.cc -o mpica
+
+parca: cppca.cpp parca.cpp gridmanager.cpp cppca.h
+	$(CXX) $(CFLAGS) cppca.cpp parca.cpp gridmanager.cpp -o parca
 
 make_states: cppca.cpp make_states.cpp cppca.h
 	$(CXX) $(CFLAGS) cppca.cpp make_states.cpp -o make_states
-
-all: cppca cppserver time_ca griddev make_states parca
 
 griddev: griddev.cpp gridmanager.cpp gridmanager.h
 	$(CPP) $(CFLAGS) griddev.cpp gridmanager.cpp -o griddev

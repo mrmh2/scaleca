@@ -1,8 +1,10 @@
-#include"cppca.h"
 #include<ctime>
 #include<sys/time.h>
 
-#include"omp.h"
+#include<omp.h>
+
+#include"cppca.h"
+#include"gridmanager.h"
 
 using namespace std;
 
@@ -122,10 +124,11 @@ void fourtile()
   //  cout << "Magic number: " << camaster.sum_state() << endl;
 
   int nthreads = 4;
-
   omp_set_num_threads(nthreads);
-  int snrows = nrows / 2;
-  int sncols = ncols / 2;
+
+  GridManager gm(nrows, ncols, nthreads);
+  int snrows = gm.TileDimensions().r;
+  int sncols = gm.TileDimensions().c;
 
   vector<int> border_share_n(sncols * nthreads);
   vector<int> border_share_s(sncols * nthreads);
@@ -141,10 +144,10 @@ void fourtile()
 #pragma omp parallel shared(camaster, snrows, sncols)
   {
     int tid = omp_get_thread_num();
-    int rtiles = 2;
-    int ctiles = 2;
-    int tr = tid / 2;
-    int tc = tid % 2;
+    int rtiles = gm.GridDimensions().r;
+    int ctiles = gm.GridDimensions().c;
+    int tr = gm.TilePosition(tid).r;
+    int tc = gm.TilePosition(tid).c;
     CAVote cashard(snrows, sncols);
 
     // Populate our shard with data from the master
@@ -156,13 +159,11 @@ void fourtile()
 
     check_totals(&checksum, &cashard, &camaster);
 
-
     int gen_count = 0;
     int count_freq = 10;
     double start = read_timer();
 
-
-    for(int g = 0; g < 100000; g++) {
+    for(int g = 0; g < 10000; g++) {
       /* Fetch our borders */
       vector<int> nb = cashard.get_border(NORTH);
       vector<int> sb = cashard.get_border(SOUTH);
@@ -186,17 +187,22 @@ void fourtile()
 
       /* Make sure all threads have written border data before we start reading! */
 #pragma omp barrier
-      int my_ns = (tid + ctiles) % nthreads;
+      //int my_ns = (tid + ctiles) % nthreads;
+      int my_n = gm.NeighbourSID(gm::NORTH, tid);
+      int my_s = gm.NeighbourSID(gm::SOUTH, tid);
+      int my_e = gm.NeighbourSID(gm::EAST, tid);
+      int my_w = gm.NeighbourSID(gm::WEST, tid);
+
       int my_ew = tr * ctiles + (tc + 1) % ctiles;
 
       for(int c = 0; c < sncols; c++) {
-	nb[c] = border_share_s[c + my_ns * sncols];
-	sb[c] = border_share_n[c + my_ns * sncols];
+	nb[c] = border_share_s[c + my_n * sncols];
+	sb[c] = border_share_n[c + my_s * sncols];
       }
 
       for(int r = 0; r < snrows; r++) {
-	wb[r] = border_share_e[r + my_ew * snrows];
-	eb[r] = border_share_w[r + my_ew * sncols];
+	wb[r] = border_share_e[r + my_e * snrows];
+	eb[r] = border_share_w[r + my_w * sncols];
       }
       
       cashard.set_border(NORTH, nb);
@@ -204,11 +210,16 @@ void fourtile()
       cashard.set_border(WEST, wb);
       cashard.set_border(EAST, eb);
 
-      int my_nw = ctiles * ((tr + 1)%2) + ((tc + 1)%2);
+      //int my_nw = ctiles * ((tr + 1)%2) + ((tc + 1)%2);
+      int my_nw = gm.NeighbourSID(gm::NW, tid);
+      int my_ne = gm.NeighbourSID(gm::NE, tid);
+      int my_se = gm.NeighbourSID(gm::SE, tid);
+      int my_sw = gm.NeighbourSID(gm::SW, tid);
+
       int nw = corner_share_se[my_nw];
-      int se = corner_share_nw[my_nw];
-      int ne = corner_share_sw[my_nw];
-      int sw = corner_share_ne[my_nw];
+      int se = corner_share_nw[my_se];
+      int ne = corner_share_sw[my_ne];
+      int sw = corner_share_ne[my_sw];
 
       cashard.set_corner(NW, nw);
       cashard.set_corner(NE, ne);
@@ -216,7 +227,6 @@ void fourtile()
       cashard.set_corner(SW, sw);
 
       cashard.raw_update();
-
 
       // if (tid == 0) camaster.update();
       // check_totals(&checksum, &cashard, &camaster);

@@ -7,6 +7,10 @@ GridManager::GridManager(int nrows, int ncols, int nshards) :
 {
   // TODO - do this properly!
   switch (nshards) {
+  case 2:
+    grid_rows = 2;
+    grid_cols = 1;
+    break;
   case 4:
     grid_rows = 2;
     grid_cols = 2;
@@ -56,7 +60,7 @@ int GridManager::TileSID(GridRef tile_position)
   return c + r * grid_cols;
 }
 
-int GridManager::NeighbourSID(grid_neighbour neigh, int sid)
+int GridManager::NeighbourSID(gm::grid_neighbour neigh, int sid)
 {
   int no[8][2] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, 1}, {1, -1} };
 

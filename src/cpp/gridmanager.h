@@ -9,7 +9,9 @@
 
 using namespace std;
 
-enum grid_neighbour {NORTH, SOUTH, WEST, EAST, NW, NE, SE, SW};
+namespace gm {
+  enum grid_neighbour {NORTH, SOUTH, WEST, EAST, NW, NE, SE, SW};
+}
 
 class GridRef {
  public:
@@ -28,7 +30,7 @@ class GridManager {
   GridRef TileDimensions();
   GridRef TilePosition(int sid);
   int TileSID(GridRef tile_position);
-  int NeighbourSID(grid_neighbour neigh, int sid);
+  int NeighbourSID(gm::grid_neighbour neigh, int sid);
  private:
   int total_rows, total_cols;
   int nshards;

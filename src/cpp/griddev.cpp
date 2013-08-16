@@ -27,7 +27,7 @@ void test_neigh()
   GridManager gm(6000, 6000, nthreads);
 
   for(int i = 0; i < nthreads; i++) {
-    cout << gm.NeighbourSID(WEST, i) << endl;
+    cout << gm.NeighbourSID(gm::WEST, i) << endl;
   }
 
 }
