@@ -9,8 +9,6 @@
 
 #include<assert.h>
 
-#include<omp.h>
-
 #ifndef _cppca_h
 #define _cppca_h
 

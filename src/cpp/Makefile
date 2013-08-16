@@ -10,6 +10,11 @@ parca: cppca.cpp parca.cpp cppca.h
 make_states: cppca.cpp make_states.cpp cppca.h
 	$(CXX) $(CFLAGS) cppca.cpp make_states.cpp -o make_states
 
+all: cppca cppserver time_ca griddev make_states parca
+
+griddev: griddev.cpp gridmanager.cpp gridmanager.h
+	$(CPP) $(CFLAGS) griddev.cpp gridmanager.cpp -o griddev
+
 time_ca: cppca.cpp time_ca.cpp cppca.h
 	$(CPP) $(CFLAGS) cppca.cpp time_ca.cpp -o time_ca
 
