@@ -102,11 +102,11 @@ void mpi_ca(int nrows, int ncols, int sid, int nshards)
     MPI_Irecv(&new_corner_se, 1, MPI_INT, my_se, 4, MPI_COMM_WORLD, &req[14]);
     MPI_Irecv(&new_corner_sw, 1, MPI_INT, my_sw, 5, MPI_COMM_WORLD, &req[15]);
 
-    if (sid == 0) printf("Waiting at barrier.\n");
+    //    if (sid == 0) printf("Waiting at barrier.\n");
 
     MPI_Waitall(16, req, stats);
 
-    if (sid == 0) printf("Passed barrier\n");
+    //    if (sid == 0) printf("Passed barrier\n");
 
     cashard.set_border(NORTH, new_border_n);
     cashard.set_border(SOUTH, new_border_s);
@@ -150,25 +150,6 @@ int main(int argc, char *argv[])
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
   mpi_ca(3000, 3000, rank, size);
-
-  // printf("Rank %d of %d\n", rank, size);
-
-  // int myval = rank + 5;
-  // int rval;
-  // int next = (rank + 1) % size;
-  // int prev = (size + rank - 1) % size;
-
-  // printf("(%d) will send to %d and %d\n", rank, next, prev);
-
-  // MPI_Request req[2];
-  // MPI_Status stats[2];
-
-  // MPI_Isend(&myval, 1, MPI_INT, next, 0, MPI_COMM_WORLD, &req[0]);
-  // MPI_Irecv(&rval, 1, MPI_INT, prev, 0, MPI_COMM_WORLD, &req[1]);
-
-  // MPI_Waitall(2, req, stats);
-
-  // printf("(%d) received %d\n", rank, rval);
 
   MPI_Finalize();
 

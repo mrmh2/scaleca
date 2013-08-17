@@ -3,6 +3,10 @@
  ****************************************************************/
 
 #include<iostream>
+#include<vector>
+#include<iterator>
+#include<cmath>
+#include<assert.h>
 
 #ifndef _GRIDMANAGER_H
 #define _GRIDMANAGER_H

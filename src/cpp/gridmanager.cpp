@@ -1,37 +1,61 @@
 #include"gridmanager.h"
+vector<int> factorise(int n)
+{
+  vector<int> factors;
+  for (int i = 1; i <= sqrt(n); i++) {
+    if (n % i == 0) {
+      factors.push_back(i);
+    }
+  }
+
+  return factors;
+}
+
+GridRef best_grid_size(int n)
+{
+  assert(n > 0);
+
+  int f = factorise(n).back();
+
+  return GridRef(f, n / f);
+}
+
 
 GridManager::GridManager(int nrows, int ncols, int nshards) :
   total_rows(nrows),
   total_cols(ncols),
   nshards(nshards)
 {
+  GridRef grid_size = best_grid_size(nshards);
+  grid_rows = grid_size.r;
+  grid_cols = grid_size.c;
   // TODO - do this properly!
-  switch (nshards) {
-  case 2:
-    grid_rows = 2;
-    grid_cols = 1;
-    break;
-  case 3:
-    grid_rows = 1;
-    grid_cols = 3;
-    break;
-  case 4:
-    grid_rows = 2;
-    grid_cols = 2;
-    break;
-  case 6:
-    grid_rows = 2;
-    grid_cols = 3;
-    break;
-  case 9:
-    grid_rows = 3;
-    grid_cols = 3;
-    break;
-  case 16:
-    grid_rows = 4;
-    grid_cols = 4;
-    break;
-  }
+  // switch (nshards) {
+  // case 2:
+  //   grid_rows = 2;
+  //   grid_cols = 1;
+  //   break;
+  // case 3:
+  //   grid_rows = 1;
+  //   grid_cols = 3;
+  //   break;
+  // case 4:
+  //   grid_rows = 2;
+  //   grid_cols = 2;
+  //   break;
+  // case 6:
+  //   grid_rows = 2;
+  //   grid_cols = 3;
+  //   break;
+  // case 9:
+  //   grid_rows = 3;
+  //   grid_cols = 3;
+  //   break;
+  // case 16:
+  //   grid_rows = 4;
+  //   grid_cols = 4;
+  //   break;
+  // }
 }
 
 int GridManager::TotalCells()

@@ -1,6 +1,13 @@
 #include"gridmanager.h"
 
+
 using namespace std;
+
+void dump_vector(vector<int> v)
+{
+  copy(v.begin(), v.end(), ostream_iterator<int>(cout, ""));
+  cout << endl;
+}
 
 void test_construct()
 {
@@ -75,9 +82,41 @@ int test_31()
   cout << endl;
 }
 
+// vector<int> factorise(int n)
+// {
+//   vector<int> factors;
+//   for (int i = 1; i <= sqrt(n); i++) {
+//     if (n % i == 0) {
+//       factors.push_back(i);
+//     }
+//   }
+
+//   return factors;
+// }
+
+// GridRef best_grid_size(int n)
+// {
+//   assert(n > 0);
+
+//   int f = factorise(n).back();
+
+//   return GridRef(f, n / f);
+// }
+
+// void test_factorise()
+// {
+//   //  dump_vector(factorise(36));
+//   // cout << factorise(36).back() << endl;
+
+//   for(int i = 1; i < 16; i++) {
+//     cout << best_grid_size(i) << endl;
+//   }
+// }
+
 int main(int argc, char *argv[])
 {
-  test_31();
+  //  test_factorise();
+  //test_31();
   //test_neigh();
   //  test_construct();
 
