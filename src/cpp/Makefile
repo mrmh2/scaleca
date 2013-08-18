@@ -2,6 +2,7 @@ CFLAGS=-O3 -fopenmp
 CPP=g++
 CXX=g++
 MPICXX=mpic++
+INCLUDE=/Users/hartleym/local/include
 
 all: cppca cppserver time_ca griddev make_states mpica parca
 
@@ -18,7 +19,7 @@ griddev: griddev.cpp gridmanager.cpp gridmanager.h
 	$(CPP) $(CFLAGS) griddev.cpp gridmanager.cpp -o griddev
 
 time_ca: cppca.cpp time_ca.cpp cppca.h
-	$(CPP) $(CFLAGS) cppca.cpp time_ca.cpp -o time_ca
+	$(CPP) $(CFLAGS) -I $(INCLUDE) cppca.cpp time_ca.cpp -o time_ca
 
 cppca: cppca.cpp test_ca.cpp cppca.h
 	g++ $(CFLAGS) cppca.cpp test_ca.cpp -o cppca
