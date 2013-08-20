@@ -64,6 +64,8 @@ public:
   CAVote(string filename) : CA(filename) {}
   void update();
   void raw_update();
+  void inner_update();
+  void border_update();
 };
 
 #endif

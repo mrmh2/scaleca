@@ -28,7 +28,9 @@ void test_timing(int nrows, int ncols)
   int count_freq = 10;
   double start = read_timer();
   while (1) {
-    ca.update();
+    //ca.update();
+    ca.inner_update();
+    ca.border_update();
     gen_count++;
     if (gen_count%count_freq == 0) {
       double gen_time = (read_timer() - start) / (double) gen_count;

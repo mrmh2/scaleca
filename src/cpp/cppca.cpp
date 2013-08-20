@@ -5,6 +5,8 @@ using namespace std;
 
 int convert(char in);
 void supdate(int *sd, int *ns, int nrows, int ncols);
+void supdate_inner(int *sd, int *ns, int nrows, int ncols);
+void supdate_border(int *sd, int *ns, int nrows, int ncols);
 
 void CALife::update()
 {
@@ -46,6 +48,17 @@ void CAVote::raw_update()
   swap(next_state, state_data);
 }  
 
+void CAVote::inner_update()
+{
+  supdate_inner(&state_data.front(), &next_state.front(), nrows, ncols);
+}
+
+void CAVote::border_update()
+{
+  supdate_border(&state_data.front(), &next_state.front(), nrows, ncols);
+  swap(next_state, state_data);
+}
+
 void supdate(int *sd, int *ns, int nrows, int ncols)
 {
   int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
@@ -69,6 +82,66 @@ void supdate(int *sd, int *ns, int nrows, int ncols)
       next_state[(1 + c) + (1 + r) * real_ncols] = ur[nsum];
     }
 }
+
+void supdate_inner(int *sd, int *ns, int nrows, int ncols)
+{
+  int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
+  int ur[10] = {0, 0, 0, 0, 1, 0, 1, 1, 1, 1};
+  int real_nrows = nrows + 2;
+  int real_ncols = ncols + 2;
+  int *state_data = sd;
+  int *next_state = ns;
+
+  int ro, co, r, c, nsum, i;
+
+  //#pragma omp parallel for private(c, nsum, ro, co, i) schedule(guided, 10)
+  for(r=1; r<nrows-1; r++)
+    for(c=1; c<ncols-1; c++) {
+      nsum = 0;
+      for (i=0; i<9; i++) {
+        ro = h9[i][0];
+        co = h9[i][1];
+        nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
+      }
+      next_state[(1 + c) + (1 + r) * real_ncols] = ur[nsum];
+    }
+}
+
+void supdate_border(int *sd, int *ns, int nrows, int ncols)
+{
+  int h9[9][2] = { {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
+  int ur[10] = {0, 0, 0, 0, 1, 0, 1, 1, 1, 1};
+  int real_nrows = nrows + 2;
+  int real_ncols = ncols + 2;
+  int *state_data = sd;
+  int *next_state = ns;
+
+  int ro, co, r, c, nsum, i;
+
+    for(c=0; c<ncols; c++) {
+      for(r=0; r<nrows; r += (nrows-1)) {
+	nsum = 0;
+	for (i=0; i<9; i++) {
+	  ro = h9[i][0];
+	  co = h9[i][1];
+	  nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
+	}
+	next_state[(1 + c) + (1 + r) * real_ncols] = ur[nsum];
+      }
+    }
+
+  for(r=0; r<nrows; r++)
+    for(c=0; c<ncols; c += (ncols-1)) {
+      nsum = 0;
+      for (i=0; i<9; i++) {
+        ro = h9[i][0];
+        co = h9[i][1];
+        nsum += state_data[(1 + c + co) + (1 + r + ro) * real_ncols];
+      }
+      next_state[(1 + c) + (1 + r) * real_ncols] = ur[nsum];
+    }
+}
+
 
 CA::CA(int in_nrows, int in_ncols) : 
 nrows(in_nrows), 
