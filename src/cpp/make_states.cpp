@@ -19,6 +19,7 @@ void create_test_ca(string filename)
 void create_large_vote(string filename)
 {
   CAVote ca(3500, 3500);
+  srand(0);
   ca.fill_random();
 
   ca.save_state(filename);
@@ -40,6 +41,6 @@ int test_glider(string filename)
 
 int main()
 {
-  create_test_ca("nedge");
-  
+  create_test_ca("edge-test.cas");
+  create_large_vote("vote.cas");
 }

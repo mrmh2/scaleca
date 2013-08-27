@@ -159,6 +159,11 @@ CA::CA(string filename)
 {
   ifstream ifile(filename.c_str());
 
+  if(!ifile) {
+    cout << "Can't load " << filename << endl;
+    exit(2);
+  }
+
   ifile >> nrows;
   ifile >> ncols;
 
