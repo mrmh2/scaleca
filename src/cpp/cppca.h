@@ -9,10 +9,6 @@
 
 #include<assert.h>
 
-#ifdef INCLUDE_OMP
-#include<omp.h>
-#endif
-
 #ifndef _cppca_h
 #define _cppca_h
 
@@ -43,6 +39,7 @@ public:
   void set_border(border b, vector<int> new_border);
   int get_corner(corner co);
   void set_corner(corner co, int new_val);
+  vector<int> copy_state();
  protected:
   //  int *state_data; // FIXME - this should be private and properly inherited
   //  int *next_state;
@@ -66,6 +63,9 @@ public:
   CAVote(int in_nrows, int in_ncols) : CA(in_nrows, in_ncols) {}
   CAVote(string filename) : CA(filename) {}
   void update();
+  void raw_update();
+  void inner_update();
+  void border_update();
 };
 
 #endif

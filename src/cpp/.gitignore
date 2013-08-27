@@ -1,4 +1,9 @@
+make_states
 cppca
 cppserver
 time_ca
 *.a
+*.cas
+parca
+mpica
+griddev

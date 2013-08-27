@@ -143,13 +143,6 @@ void test_copy()
   cacopy.dump();
 }
 
-void create_large_vote()
-{
-  CAVote ca(3500, 3500);
-  ca.fill_random();
-  ca.save_state("vote-3k5-3k5.cas");
-  cout << "Created with sum " << ca.sum_state() << endl;
-}
 
 void dump_vector(vector<int> v)
 {
@@ -192,20 +185,6 @@ void test_get_corner()
   ca.dump();
 }
 
-void create_test_ca()
-{
-  CA ca(5, 5);
-  ca.set_cell(0, 0, 1);
-  ca.set_cell(0, 2, 2);
-  ca.set_cell(0, 4, 3);
-  ca.set_cell(2, 0, 4);
-  ca.set_cell(2, 4, 5);
-  ca.set_cell(4, 0, 6);
-  ca.set_cell(4, 2, 7);
-  ca.set_cell(4, 4, 8);
-
-  ca.save_state("edge-test.cas");
-}
 
 void test_split()
 {
@@ -239,10 +218,41 @@ void test_split()
   }
 }
 
+void test_nsplit()
+{
+  CAVote ca(500, 500);
+  CAVote ca2(500, 500);
+
+  for(int g=0; g<30; g++) {
+    ca.set_border(NORTH, ca2.get_border(SOUTH));
+    ca.set_border(SOUTH, ca2.get_border(NORTH));
+    ca.set_border(EAST, ca.get_border(WEST));
+    ca.set_border(WEST, ca.get_border(EAST));
+
+    ca.set_corner(NW, ca2.get_corner(SE));
+    ca.set_corner(SE, ca2.get_corner(NW));
+    ca.set_corner(NE, ca2.get_corner(SW));
+    ca.set_corner(SW, ca2.get_corner(NE));
+
+    ca2.set_border(NORTH, ca.get_border(SOUTH));
+    ca2.set_border(SOUTH, ca.get_border(NORTH));
+    ca2.set_border(EAST, ca2.get_border(WEST));
+    ca2.set_border(WEST, ca2.get_border(EAST));
+
+    ca2.set_corner(NW, ca.get_corner(SE));
+    ca2.set_corner(SE, ca.get_corner(NW));
+    ca2.set_corner(NE, ca.get_corner(SW));
+    ca2.set_corner(SW, ca.get_corner(NE));
+
+    ca.raw_update();
+    ca2.raw_update();
+    ca2.dump();
+  }
+}
 		   
 int main(int argc, char *argv[])
 {
-  test_split();
+  test_nsplit();
   //  create_test_ca();
   //test_get_corner();
   // test_get_border();
